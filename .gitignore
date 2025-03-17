@@ -1,0 +1,6 @@
+notebooks/*
+diarios/*
+__pycache__
+*.pyc
+*.json
+.*

@@ -1,0 +1,1 @@
+from .documents.diario import DiarioOficial
