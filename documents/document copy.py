@@ -114,7 +114,8 @@ class DocumentoBase(ListaDocumentos, ABC):
         """
         if text is None:
             text = self.texto_original
-        pattern = r'((?!PA:)[\(A-ZÁÉÍÓÚÀÂÊÔÇÜÃÕ]+[ \(A-Za-záéíóúàâêôçüãõ\)]*)(?=:)'
+        #pattern = r'((?!PA:)[\(A-ZÁÉÍÓÚÀÂÊÔÇÜÃÕ]+[ \(A-Za-záéíóúàâêôçüãõ\)]*)(?=:)'
+        pattern = r'((?!PA:)[\(A-ZÁÉÍÓÚÀÂÊÔÇÜÃÕ]+[ \(A-Za-záéíóúàâêôçüãõ\)]*(?=:))(?=.*[A-Za-záéíóúàâêôçüãõ].*[A-Za-záéíóúàâêôçüãõ])'
         logger.info("Extraindo chaves do texto")
         matches = re.findall(pattern, text)
         logger.debug(f"Chaves encontradas: {matches}")
@@ -152,7 +153,4 @@ class DocumentoBase(ListaDocumentos, ABC):
 
     def _extract_field(self, pattern: str, flags: int = 0) -> Optional[str]:
         """
-        Extrai um único campo do texto usando o padrão regex fornecido.
-        """
-        match = re.search(pattern, self.texto_original, flags)
-        return match.group(1).strip() if match else None
+        Extrai um úni

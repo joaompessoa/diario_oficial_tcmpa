@@ -1,8 +1,7 @@
 import re
-import logging
 from typing import List, Dict, Optional, Tuple, Set
+from util.logger_config import logger
 
-logger = logging.getLogger(__name__)
 
 class KeyValidator:
     def __init__(self, texto_original: str, expected_keys: Optional[List[str]] = None):
@@ -256,4 +255,4 @@ if __name__ == "__main__":
     
     results = validate_document_keys(sample_text)
     for key, value in results.items():
-        print(f"{key}: {value}")
+        print(f"{key}: {value}")              

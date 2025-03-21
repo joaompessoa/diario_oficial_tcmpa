@@ -1,19 +1,17 @@
 from datetime import datetime
-from typing import Union, Optional, List, Dict, Any, Type, TypeVar
-from h11 import Data
+from turtle import down
+from typing import Optional
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin, urlparse, unquote
+from urllib.parse import urljoin
 import os
 import sys
 import re
 from util.logger_config import logger
 import pymupdf
 from pathlib import Path
-from pydantic import BaseModel, model_validator, field_validator, Field, ValidationError
-from documents.diario_exceptions import DiarioNaoExiste
-
-
+from pydantic import BaseModel, model_validator, field_validator, Field
+from errors.diario_exceptions import DiarioNaoExiste
 
 
 class DataDiario(BaseModel):
@@ -86,8 +84,6 @@ class DiarioOficial(DataDiario):
         ...    print("Diário Oficial não está disponível para hoje")
     """
 
-    # URL base para pesquisa
-
     publicacao: str = ""
     numero_diario: str = ""
     ioepa_endpoint: str = ""
@@ -105,9 +101,9 @@ class DiarioOficial(DataDiario):
 
     def __init__(
         self,
-        dia: Optional[int | str] = datetime.today().day,
-        mes: Optional[int | str] = datetime.today().month,
-        ano: Optional[int | str] = datetime.today().year,
+        dia: Optional[int | str | None] = None,
+        mes: Optional[int | str | None] = None,
+        ano: Optional[int | str | None] = None,
         download_dir: Optional[str | Path] = "",
         limpar_texto: bool = True,
         BASE_URL: str = "https://tcm.ioepa.com.br/busca/default.aspx?dts=",
@@ -125,82 +121,111 @@ class DiarioOficial(DataDiario):
             limpar_texto: Se o texto deve ser limpo durante a extração
             texto_bruto: Texto já extraído (opcional)
         """
+        super().__init__()
+        self.dia = dia if dia else datetime.today().day
+        self.mes = mes if mes else datetime.today().month
+        self.ano = ano if ano else datetime.today().year
 
         data_diario_args = {
-            "dia": dia ,
-            "mes": mes ,
-            "ano": ano ,
+            "dia": self.dia,
+            "mes": self.mes,
+            "ano": self.ano,
         }
         kwargs["data_diario"] = DataDiario(**data_diario_args)
 
-        super().__init__(**kwargs)
+        #super().__init__(**kwargs)
 
         # Confirma se o diário existe para a data
         self.limpar_texto = limpar_texto
-        self.publicacao = f"{dia}/{mes}/{ano}"
+        self.publicacao = f"{self.dia}/{self.mes}/{self.ano}"
         self.ioepa_endpoint = f"{BASE_URL}{self.publicacao}"
         self.diario_valido = self._diario_existe(self.ioepa_endpoint)
-        
-        logger.debug(f"Parametros da classe DiarioOficial: {self.model_dump()}")
+        self.pdf_file = os.path.basename(self.internet_path)
+
+
         # Se o diário não existir, não é necessário continuar
         if not self.diario_valido:
-            raise DiarioNaoExiste(
-                f"Diário não encontrado para {self.publicacao}"
-            )
+            raise DiarioNaoExiste(f"Diário não encontrado para {self.publicacao}")
         else:
             logger.info(f"Diário encontrado para {self.publicacao}")
 
         # 1. Verificar e configurar diretório de download
+        # Se o diretorio for especificado pelo usuario, checa se ele e valido, e temos as permissoes para salvar documentos nele
         if download_dir:
             try:
                 self.download_dir = Path(download_dir)
                 # Verifica se o diretório é válido
                 if not self._validar_diretorio(self.download_dir):
-                    logger.warning(f"Diretório inválido: {download_dir}. Usando diretório padrão.")
+                    logger.warning(
+                        f"Diretório inválido: {download_dir}. Usando diretório padrão."
+                    )
+                    # Se for invalido usamos o diretorio padrao que e pasta_atual/diarios/ano/mes/diario.pdf
                     self.download_dir = self._obter_diretorio_padrao()
+                # se o diretorio for valido, realizamos o download do pdf
+                else:
+                    if self.download_pdf(local_path=self.download_dir, internet_path=self.internet_path):
+                        self.texto_original = self.extract_text(
+                            pdf_path=self.local_path, limpar_texto=self.limpar_texto
+                        )
+                    
             except Exception as e:
-                logger.warning(f"Erro ao configurar diretório de download: {e}. Usando diretório padrão.")
+                # Qual outro erro tentamos criar o diretorio padrao comentado acima
+                logger.warning(
+                    f"Erro ao configurar diretório de download: {e}. Usando diretório padrão."
+                )
                 self.download_dir = self._obter_diretorio_padrao()
         else:
+            # Se o diretorio nao for especificado pelo usuario, seguimos direto para checar o diretorio padrao
             self.download_dir = self._obter_diretorio_padrao()
+            # local_path sera o caminho para o pdf
             self.local_path = os.path.join(self.download_dir, Path(self.pdf_file))
+            # checa se o pdf ja existe e ja foi baixado anteriormente
             if self._pdf_disponivel(self.local_path):
                 logger.info(f"PDF válido encontrado: {self.pdf_file}")
+                # se o pdf existir verificamos se temos acesso ao texto dele
                 if not self.texto_original:
                     logger.debug("Extraindo texto do PDF")
-                    self.texto_original = self.extract_text(pdf_path=self.local_path, limpar_texto=self.limpar_texto)
+                    # se nao tivermos o texto, usamos extract_text para extrai-lo
+                    self.texto_original = self.extract_text(
+                        pdf_path=self.local_path, limpar_texto=self.limpar_texto
+                    )
+                    # numero do diario para o dia especificado
                     self.numero_diario = self._obter_numero_diario(self.texto_original)
             else:
-                if self.download_pdf(self.internet_path) and self._pdf_disponivel(self.local_path):
-                    self.texto_original = self.extract_text(pdf_path=self.local_path, limpar_texto=self.limpar_texto)
+                # se o pdf nao estiver disponivel, assumimos que precisamos fazer o download do mesmo
+                if self.download_pdf(local_path=self.local_path, internet_path=self.internet_path):
+                    self.texto_original = self.extract_text(
+                        pdf_path=self.local_path, limpar_texto=self.limpar_texto
+                    )
                 else:
                     logger.error(f"Erro ao verificar PDF especificado: {e}")
+        logger.debug(f"Parametros da classe DiarioOficial: {self.model_dump()}")
 
         logger.info(
-            f"Inicializando DiarioOficial para a data: {self.data_diario.dia:02d}/{self.data_diario.mes:02d}/{self.data_diario.ano}"
+            f"Inicializando DiarioOficial para a data: {self.dia:02d}/{self.mes:02d}/{self.ano}"
         )
 
     def _obter_diretorio_padrao(self) -> Path:
         """
         Retorna o diretório padrão para download dos diários.
-        
+
         Returns:
             Path: Caminho do diretório padrão
         """
         return (
             Path.cwd()
             / "diarios"
-            / f"{self.data_diario.ano}"
-            / f"{self.data_diario.mes:02d}"
+            / f"{self.ano}"
+            / f"{self.mes:02d}"
         )
 
     def _validar_diretorio(self, path: Path) -> bool:
         """
         Valida se um diretório é utilizável para download.
-        
+
         Args:
             path: Caminho do diretório a ser validado
-            
+
         Returns:
             bool: True se o diretório for válido
         """
@@ -256,11 +281,13 @@ class DiarioOficial(DataDiario):
             if pdf_link and "href" in pdf_link.attrs:
                 self.internet_path = urljoin(ioepa_endpoint, pdf_link["href"])
             else:
-                logger.warning(f"URL encontrada não parece ser PDF: {self.internet_path}")
+                logger.warning(
+                    f"URL encontrada não parece ser PDF: {self.internet_path}"
+                )
 
         logger.info(f"URL do PDF encontrada: {self.internet_path}")
-        pdf_file = os.path.basename(self.internet_path)
-        self.pdf_file = pdf_file
+        # pdf_file = os.path.basename(self.internet_path)
+        # self.pdf_file = pdf_file
         return True
 
     def refresh(self) -> bool:
@@ -272,6 +299,7 @@ class DiarioOficial(DataDiario):
         """
         self.diario_valido = self._diario_existe(self.ioepa_endpoint)
         return self.diario_valido
+
     def _diretorio_existe(self, download_dir: str | Path) -> bool:
         """
         Verifica se o diretório de download existe.
@@ -287,6 +315,7 @@ class DiarioOficial(DataDiario):
         else:
             logger.info(f"Diretório encontrado: {download_dir}")
             return True
+
     def _pdf_disponivel(self, pdf_path: str | Path) -> bool:
         """
         Verifica se o PDF está disponível.
@@ -316,21 +345,8 @@ class DiarioOficial(DataDiario):
             logger.error(f"Erro ao ler o PDF: {e}")
             return False
 
-    def _obter_diretorio_padrao(self) -> Path:
-        """
-        Retorna o diretório padrão para download dos diários.
-        
-        Returns:
-            Path: Caminho do diretório padrão
-        """
-        return (
-            Path.cwd()
-            / "diarios"
-            / f"{self.data_diario.ano}"
-            / f"{self.data_diario.mes:02d}"
-        )
 
-    def download_pdf(self, internet_path: str) -> bool:
+    def download_pdf(self, internet_path: str, local_path: Path = None) -> bool:
         """
         Baixa o PDF da URL armazenada.
 
@@ -342,27 +358,27 @@ class DiarioOficial(DataDiario):
         """
         if not self.diario_valido or not internet_path:
             logger.error("URL do PDF não disponível. Diário pode não existir.")
-            raise DiarioNaoExiste(
-                f"Diário não encontrado para {self.publicacao}"
-            )
-
+            raise DiarioNaoExiste(f"Diário não encontrado para {self.publicacao}")
+        local_path = self.local_path if not local_path else local_path
+        
         try:
             logger.info(f"Iniciando download do PDF: {self.pdf_file}")
             response = requests.get(internet_path, timeout=60)
             response.raise_for_status()
+            try:
+                # Ensure the directory exists before saving the file
+                os.makedirs(os.path.dirname(local_path), exist_ok=True)
+                
+                logger.debug(f'Trying to make a file {self.pdf_file} on {self.download_dir} with the full local_path as {self.local_path}')
+                with open(self.local_path, "wb") as f:
+                    f.write(response.content)
+                logger.info(f"PDF salvo com sucesso em: {self.local_path}")
+                return True
+            except IOError as e:
+                logger.error(f"Falha ao salvar PDF: {e}")
+                return False
         except requests.exceptions.RequestException as e:
             logger.error(f"Falha no download do PDF: {e}")
-            return False
-
-        try:
-
-            with open(self.local_path, "wb") as f:
-                f.write(response.content)
-
-            logger.info(f"PDF salvo com sucesso em: {self.local_path}")
-            return True
-        except IOError as e:
-            logger.error(f"Falha ao salvar PDF: {e}")
             return False
 
     def clean_text(self, text: str) -> str:
@@ -389,7 +405,7 @@ class DiarioOficial(DataDiario):
         text = re.sub(r" {2,}", " ", text)
         text = re.sub(r"\n", "", text)
         return text.strip()
-    
+
     def _obter_numero_diario(self, texto: str) -> str:
         pattern = r"\b\d{4}[\s\W]+DOE\s+TCMPA\s+Nº\s+([\d\.]+)"
         match = re.search(pattern, texto, re.DOTALL)
@@ -399,15 +415,14 @@ class DiarioOficial(DataDiario):
         else:
             return ""
 
-
-    def extract_text(self, pdf_path:  Path = None, limpar_texto: bool = True) -> str:
+    def extract_text(self, pdf_path: Path = None, limpar_texto: bool = True) -> str:
         """
         Extrai o texto de um arquivo PDF.
-        
+
         Args:
             pdf_path: Caminho do arquivo PDF (opcional)
             limpar_texto: Se deve limpar o texto extraído
-            
+
         Returns:
             str: Texto extraído do PDF
         """
@@ -415,7 +430,6 @@ class DiarioOficial(DataDiario):
         if self.texto_original:
             logger.info("Texto já extraído anteriormente, reutilizando raw_text.")
             return self.texto_original
-
 
         try:
             logger.info(f"Iniciando extração de texto de: {pdf_path}")
@@ -429,7 +443,9 @@ class DiarioOficial(DataDiario):
                     logger.info(f"Processando página {i+1}/{total_paginas}")
                     texto_pagina = pagina.get_text()
                     self.numero_diario = self._obter_numero_diario(texto_pagina)
-                    texto_pagina = self.clean_text(texto_pagina) if limpar_texto else texto_pagina
+                    texto_pagina = (
+                        self.clean_text(texto_pagina) if limpar_texto else texto_pagina
+                    )
                     if texto_pagina:
                         texto.append(texto_pagina)
 
@@ -468,47 +484,47 @@ class DiarioOficial(DataDiario):
             return cls(dia=data.day, mes=data.month, ano=data.year, **kwargs)
         except ValueError as e:
             raise ValueError(f"Erro na validação da data: {e}")
-        
+
     @property
     def texto_preview(self) -> str:
         """Returns a truncated preview of the texto_original"""
-        if not hasattr(self, 'texto_original') or not self.texto_original:
+        if not hasattr(self, "texto_original") or not self.texto_original:
             return "No text extracted"
-        return f"{self.texto_original[:100]}..." if len(self.texto_original) > 100 else self.texto_original
-    
-    
+        return (
+            f"{self.texto_original[:100]}..."
+            if len(self.texto_original) > 100
+            else self.texto_original
+        )
+
     def __str__(self) -> str:
         """
         Customizes the string representation of the DiarioOficial object.
         Shows a preview of texto_original (first 100 characters) instead of the full text.
-        
+
         Returns:
             str: The formatted string representation
         """
-        
+
         # Get all object attributes except texto_original
         attributes = self.model_dump()
-        if 'texto_original' in attributes and attributes['texto_original']:
-            attributes['texto_original'] = self.texto_preview
-            
+        if "texto_original" in attributes and attributes["texto_original"]:
+            attributes["texto_original"] = self.texto_preview
+
         # Format the representation
         formatted_attrs = ", ".join([f"{k}={repr(v)}" for k, v in attributes.items()])
         return f"DiarioOficial({formatted_attrs})"
-    
+
     def __repr__(self) -> str:
         """
         Override __repr__ to ensure that nested representations use the truncated version.
         """
         return self.__str__()
-    
-    
+
     def get_full_text(self) -> str:
         """
         Returns the full texto_original content.
-        
+
         Returns:
             str: The complete extracted text
         """
         return self.texto_original
-    
-  
