@@ -15,11 +15,11 @@ class Resolucao(DocumentoBase):
 
     def __init__(self, diario: Optional[DiarioOficial] = None) -> None:
         """
-        Inicializa a classe Acordao.
+        Inicializa a classe.
 
         Args:
-            diario (Optional[DiarioOficial]): Diário oficial de onde extrair os acórdãos.
-                Se não fornecido, cria um novo para a data atual.
+            diario (Optional[DiarioOficial]): Diário oficial de onde extrair os documentos.
+            Se não fornecido, cria um novo para a data atual.
         """
         logger.debug("Inicializando Resolucao")
 
@@ -31,7 +31,7 @@ class Resolucao(DocumentoBase):
 
         self.publicacao = diario.publicacao
         self.texto_original = diario.texto_original
-        self.categoria = "resolucao"
+        self.categoria = self._document_type()
         self.diario = diario
         self.documentos = self._extract_data(diario=self.diario)
 
@@ -54,7 +54,7 @@ class Resolucao(DocumentoBase):
             # Limpa o texto da seção
             # clean_raw = self.clean_text(section)
             clean_raw = section
-            data_dict: Dict[str, Any] = {"categoria": "resolucao"}
+            data_dict: Dict[str, Any] = {"categoria": self.categoria}
 
             # Extrai o número do acórdão
             match = re.search(r"RESOLUÇÃO Nº (\d+\.\d+)", clean_raw)
@@ -65,14 +65,14 @@ class Resolucao(DocumentoBase):
                 continue
             processo_pattern = re.compile(
                         r'(?P<processo>Processo\s+nº\s+[\d\.]+(?:\s*\([\d\.]+\))?)',
-                        re.IGNORECASE
+                        re.MULTILINE
                     )
             processo_match = processo_pattern.search(clean_raw)
 
             if processo_match:
                 data_dict["processo"] = processo_match.group("processo")
             else:
-                logger.warning("Sem processo para a resolucao")
+                logger.warning(f"Sem processo para {self.categoria}")
 
             # Extrai pares chave:valor e limpa cada valor
             keys = self._get_keys(clean_raw)
@@ -107,7 +107,7 @@ class Resolucao(DocumentoBase):
                     data_dict[field] = self._redact_personal_data(data_dict[field])
 
             # Armazena o texto original da seção e a data do diário
-            data_dict["texto_original"] = clean_raw
+            data_dict["sample_texto"] = f'{clean_raw[:100]}...'
             # Certifique-se de que "data_diario" esteja presente; use self.data_diario se existir, ou uma string vazia
             data_dict["publicacao"] = getattr(self, "publicacao", "")
             data_dict["diario"] = diario.numero_diario

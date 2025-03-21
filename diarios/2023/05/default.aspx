@@ -1,0 +1,161 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>
+	Busca IOE
+</title>
+    <style>
+        .body {
+            //background-color: #f2f2f2;
+            background-color: #ffffff;
+            margin: 0px;
+        }
+
+        #quadro {
+            height: 465px;
+            width: 495px;
+        }
+
+        img {
+            border: none;
+        }
+
+        #top {
+            width: 495px;
+            background-image: url("images/busca/top_busca.png");
+            height: 53px;
+            margin: 0px 0px 0px 0px;
+            padding: 0px 0px 0px 0px;
+            text-align: center;
+        }
+
+        #bot {
+            width: 495px;
+            background-image: url("images/busca/bt_envio.png");
+            height: 49px;            
+        }
+
+        #mid {
+            width: 495px;
+            height: 363px;
+            text-align: center;
+            vertical-align: central;
+            padding-top: 20px;
+        }
+
+        .alert {
+            height: 30px;
+            padding: 0px 0px 0px 0px;
+        }
+    </style>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $.datepicker.regional['pt'] = {
+                closeText: 'Fechar',
+                prevText: '&#x3c;Anterior',
+                nextText: 'Seguinte',
+                currentText: 'Hoje',
+                monthNames: ['Janeiro', 'Fevereiro', 'Mar&ccedil;o', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+                'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                dayNames: ['Domingo', 'Segunda-feira', 'Ter&ccedil;a-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'S&aacute;bado'],
+                dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S&aacute;b'],
+                dayNamesMin: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S&aacute;b'],
+                weekHeader: 'Sem',
+                dateFormat: 'dd/mm/yy',
+                firstDay: 0,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ''
+            };
+            $.datepicker.setDefaults($.datepicker.regional['pt']);
+            $("#datepicker").datepicker();
+        });
+    </script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous" />
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+</head>
+<body class="body">
+    <form method="post" action="default.aspx?dts=01%2f05%2f2023" id="form1">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="tlxU7G2BoXKiCuM6XQwjHN2LIj+060ucT+7X75Ud5V6M6CIUbLt1ldsAwKB4aMwfu/4SCZFekxmJ61iv3CXNuBG6JtHqn1awbwZFKkXnFNHGv0lrstQ3JgmoADrnLOBh3eAh7l7KvOgiJg5U+fLtGmN4HORGxCMTpwQPJlzngoA=" />
+
+
+<script src="/busca/ScriptResource.axd?d=T-Xq6qGaV5pD5HBeyVherYThMqWDko1lH0iwBYA8pmobJdzvTj1hpKqEE9nY2rxQg612GC2_fa-wwh9GoNudN4o2rfPGTK1M5mfUcW5uNpWBQC5mZ3RpnVyPiZmd5L3QE6U1wblvPbOsBzBL8jggsqE5S-ek2KHspFqiow_4ufU1&amp;t=ffffffffb53e74b8" type="text/javascript"></script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="F8CD5AC9" />
+<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="1PmUDvGCj/g+DIWK0GoHhcZJI6NNQ+e+ebWjfNR9OrcL0ekeryAifOvbq1QWP+eKepjQEirkHxKXmBCbI0IFbJrcBLu28Bg0mmbjnRrtVGBz+dwZf2dJ3kkTcNwOcWPJBT0YCmFn88gZeieww+cOtg==" />
+
+        
+        <div id="quadro">
+
+            <div id="top">
+
+                <div style="float: left; font-size: 28px; font-family: Tahoma; padding-left: 70px; font-weight: bold; padding-top: 8px">
+                    Diário Oficial
+                </div>
+                <div style="float: left; font-size: 28px; font-family: Tahoma; padding-top: 6px">
+                    &nbsp;&nbsp;
+                    <div style="float: right; padding: 0px 20px 0px 2px">
+                        <input type="submit" name="bt_diario" value="Alterar data" id="bt_diario" class="btn btn-sm btn-default" />
+                    </div>
+                    <div style="float: right; padding: 8px 0px 0px 0px">
+                        <input name="datepicker" type="text" value="30/04/2023" id="datepicker" class="form-control input-sm" />
+                    </div>
+                </div>
+            </div>
+            <div style="clear: both"></div>
+            <div id="mid">
+                <a id="hl_pdf" href="#" target="_blank"><img id="img_site" class="auto-style1" /></a>
+
+                <div id="Panel1">
+	
+                    <div style="text-align: center; width: 100%">
+                        <div class="alert alert-danger" style="padding: 5px 0px 0px 0px; width: 250px; margin: 5px auto 0px auto">
+                            <strong>
+                                <span id="Label1">01/05/2023</span></strong> Diário não encontrado.
+                        </div>
+                    </div>
+                
+</div>
+
+            </div>
+            <div id="bot">
+
+                <div style="float: left; padding: 10px 0px 0px 160px">
+                    <a href="https://www.google.com/url?hl=pt-BR&q=http://www.tcm.pa.gov.br/component/content/article/4-processos-julgados/553-doe.html&source=gmail&ust=1492785409565000&usg=AFQjCNH-301E63WO78fGCbiuLEjLV2ypsg">
+                        Edições anteriores do Diário Eletrônico <b>(não oficial)</b>, de 29/05/2012 a 12/12/2016.
+                    </a>
+                </div>
+
+                <div style="float: left; padding: 10px 0px 0px 160px">
+                    <input id="Button1" type="button" value="Acessar o sistema e-Diário" class="btn btn-sm btn-default" onclick="window.open('http://tcm.ioepa.com.br/envio', '_blank');" />
+                </div>
+                <!-- <div style="float: right; padding: 10px 20px 0px 0px">
+                    <input id="Button2" type="button" value="Pesquisa textual" class="btn btn-sm btn-default" onclick="window.open('http://www.ioepa.com.br/pesquisa', '_blank');" />
+                </div> -->
+
+
+
+            </div>
+
+        </div>
+
+    </form>
+</body>
+</html>

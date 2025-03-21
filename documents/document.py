@@ -23,17 +23,17 @@ class DocumentoDiarioOficial(BaseModel):
     )
     sessao: Optional[str] = Field(
         default="",
-        description="Data da publicação representada no diário oficial",
+        description="Data da sesão representada no diário oficial",
         examples=["3 de Março de 2025"],
     )
-    numero: Optional[str] = Field(default="", description="Número do documento")
+    numero: Optional[str] = Field(
+        default="",
+        description="Número do documento"
+    )
     publicacao: Optional[str] = Field(
         default="",
         description="Data da publicação do diário oficial em DD/MM/YYYY",
         examples=["03/03/2025"],
-    )
-    texto_original: Optional[str] = Field(
-        default="", description="Texto limpo (processado) do documento"
     )
     
 
@@ -106,26 +106,6 @@ class DocumentoBase(ListaDocumentos, ABC):
         text = re.sub(r"\n", "", text)
         return text.strip()
 
-    # def _get_keys(self, text: Optional[str] = None) -> List[str]:
-    #     """
-    #     Extrai possíveis chaves (nomes de campos) do texto.
-    #     """
-    #     if text is None:
-    #         text = self.texto_original
-    #     pattern = r"(?!PA:)[\(A-ZÁÉÍÓÚÀÂÊÔÇÜÃÕ]+[\(A-Za-záéíóúàâêôçüãõ\)](?=:)"
-
-
-    #     logger.info("Extraindo chaves do texto")
-    #     matches = re.findall(pattern, text)
-    #     logger.debug(f"Chaves encontradas: {matches}")
-    #     filtered_keys = []
-    #     for match in matches:
-    #         match = match.strip()
-    #         if match.lower() not in ("cpf", "endereço", "(cpf") and match not in filtered_keys:
-    #             if len(match) > 2:
-    #                 logger.debug(f'Chave {match} passou nos filtros')
-    #                 filtered_keys.append(match)
-    #     return filtered_keys
     def _get_keys(self, text: Optional[str] = None) -> List[str]:
         """
         Extrai possíveis chaves (nomes de campos) do texto.
