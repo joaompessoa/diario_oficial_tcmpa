@@ -1,48 +1,57 @@
 import re
-import logging
+from util.logger_config import logger
 from typing import Dict, Any, List, Optional
 from documents.document import DocumentoBase, DocumentoDiarioOficial
 from documents.diario import DiarioOficial, DataDiario
 
-logger = logging.getLogger(__name__)
 
-class Acordao(DocumentoBase, DiarioOficial):
+class Acordao(DocumentoBase):
     """
     Classe representando um Acórdão extraído do Diário Oficial.
 
     Um Acórdão é um documento de decisão emitido pelo tribunal com estrutura
     específica e metadados que precisam ser extraídos para análise posterior.
     """
+
     def __init__(
-        self,
-        publicacao: DataDiario | str = DataDiario(),
-        texto_original: str = "",
-    ) -> None:
-        """
-        Inicializa a classe Acordao.
+            self,
+            diario: Optional[DiarioOficial] = None
+        ) -> None:
+            """
+            Inicializa a classe Acordao.
 
-        Args:
-            publicacao (DataDiario | str): Data de publicação do acórdão.
-            texto_original (str): Texto bruto do acórdão.
-        """
-        super().__init__(publicacao=publicacao, texto_original=texto_original)
-        self.document_type = self._document_type
-        super(DiarioOficial, self).__init__(
-            dia=self.publicacao.dia,
-            mes=self.publicacao.mes,
-            ano=self.publicacao.ano,
-        )
+            Args:
+                diario (Optional[DiarioOficial]): Diário oficial de onde extrair os acórdãos.
+                    Se não fornecido, cria um novo para a data atual.
+            """
+            logger.debug("Inicializando Acordao")
+            
+            
+            if not diario:
+                logger.warning(f"Nenhum diario disponibilizado, usando o dia de hoje!")
+                diario = DiarioOficial()
+            
+      
+            super().__init__(diario=diario)
+        
+            self.publicacao = diario.publicacao
+            self.texto_original = diario.texto_original
+            self.categoria = "acordao"
+            self.diario = diario
+            self.documentos = self._extract_data(diario=self.diario)
 
-    def _extract_data(self) -> List[DocumentoDiarioOficial]:
+
+    def _extract_data(self, diario: DiarioOficial) -> List[DocumentoDiarioOficial]:
         """
-        Processa o raw_text, dividindo-o em seções, extraindo os dados de cada
-        seção e retornando uma lista de objetos DocumentoDiarioOficial.
+        Processa o texto do diário, dividindo-o em seções para cada Acórdão, então retorna os dados de cada
+        seção em uma lista de objetos DocumentoDiarioOficial (criado em documents/document.py).
 
         Returns:
             List[DocumentoDiarioOficial]: Documentos extraídos.
         """
+        texto_original = diario.texto_original
         extracted_documents: List[DocumentoDiarioOficial] = []
-        sections = self.get_sections(text=self.raw_text)
+        sections = self.get_sections(self=self, text=texto_original)
         if not sections:
             logger.warning("Nenhuma seção encontrada no texto bruto.")
             return extracted_documents
@@ -51,7 +60,7 @@ class Acordao(DocumentoBase, DiarioOficial):
             # Limpa o texto da seção
             #clean_raw = self.clean_text(section)
             clean_raw = section
-            data_dict: Dict[str, Any] = {"categoria": self.document_type}
+            data_dict: Dict[str, Any] = {"categoria": "acordao"}
 
             # Extrai o número do acórdão
             acordao_match = re.search(r'ACÓRDÃO Nº (\d+\.\d+)', clean_raw)
@@ -75,21 +84,22 @@ class Acordao(DocumentoBase, DiarioOficial):
             )
             date_match = re.search(f'Sessão Eletrônica.*?{date_pattern}', clean_raw, re.DOTALL)
             if date_match:
-                data_dict["julgado_em"] = date_match.group(1).strip()
+                data_dict["sessao"] = date_match.group(1).strip()
             else:
                 alt_date_match = re.search(date_pattern, clean_raw)
                 if alt_date_match:
-                    data_dict["julgado_em"] = alt_date_match.group(1).strip()
+                    data_dict["sessao"] = alt_date_match.group(1).strip()
 
-            # # Redige dados pessoais conforme LGPD
-            # for field in ["ordenador", "responsavel", "representante_legal", "interessado"]:
-            #     if field in data_dict and data_dict[field]:
-            #         data_dict[field] = self._redact_personal_data(data_dict[field])
+            # Redige dados pessoais conforme LGPD
+            for field in ["ordenador", "responsavel", "representante_legal", "interessado"]:
+                if field in data_dict and data_dict[field]:
+                    data_dict[field] = self._redact_personal_data(data_dict[field])
 
             # Armazena o texto original da seção e a data do diário
             data_dict["texto_original"] = clean_raw
             # Certifique-se de que "data_diario" esteja presente; use self.data_diario se existir, ou uma string vazia
-            data_dict["publicado_em"] = getattr(self, "publicado_em", "")
+            data_dict["publicacao"] = getattr(self, "publicacao", "")
+            data_dict["diario"] = diario
 
             logger.debug(f"Extracted Acordao {data_dict.get('numero', 'unknown')}")
             try:
@@ -100,25 +110,29 @@ class Acordao(DocumentoBase, DiarioOficial):
                 logger.error(f"Erro ao criar DocumentoDiarioOficial para seção: {e}")
 
         return extracted_documents
+    
+    def validate_acordao_keys(self, keys: list):
+        if not keys:
+            keys = self._get_keys()
 
-    @staticmethod
-    def get_sections(text: str):
+    def get_sections(self, text: str = None) -> List[str]:
         """
-        Extract and structure acórdãos from a DOE TCMPA document.
+        Extrai os acórdãos do Diário Oficial
         
         Args:
-            text (str): The full text of the DOE TCMPA document.
+            text (str): O texto original do diário.
             
         Returns:
             list: A list of dictionaries, each containing the structured data of an acórdão.
         """
+        if not text:
+            text = self.texto_original
         
-      
-        # Find all acórdão start positions
+        
         acordao_pattern = r'ACÓRDÃO\s+Nº\s+(\d+\.\d+)'
         acordao_matches = list(re.finditer(acordao_pattern, text))
         
-        # Define section delimiters for finding the end of an acórdão
+        # Define os delimitadores de seção mais comuns
         section_delimiters = [
             "DO GABINETE DA PRESIDÊNCIA",
             "PAUTA DE JULGAMENTO",
@@ -143,7 +157,7 @@ class Acordao(DocumentoBase, DiarioOficial):
                     if delimiter_pos != -1 and delimiter_pos < end_pos:
                         end_pos = delimiter_pos
             
-            # Extract the acórdão text
+            # Extrai o acórdão 
             acordao_text = text[start_pos:end_pos].strip()
 
             
@@ -151,3 +165,5 @@ class Acordao(DocumentoBase, DiarioOficial):
                 acordaos.append(acordao_text)
         
         return acordaos
+    
+    

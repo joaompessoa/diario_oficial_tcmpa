@@ -2,4 +2,5 @@ pydantic_ai
 pymupdf
 requests
 beautifulsoup4
+loguru
 

@@ -7,14 +7,13 @@ from urllib.parse import urljoin, urlparse, unquote
 import os
 import sys
 import re
-from loguru import logger
+from util.logger_config import logger
 import pymupdf
 from pathlib import Path
 from pydantic import BaseModel, model_validator, field_validator, Field, ValidationError
 from documents.diario_exceptions import DiarioNaoExiste
 
 
-logger.add(sink=sys.stdout,level="DEBUG", format="{time} {level} {message}",)
 
 
 class DataDiario(BaseModel):
@@ -90,9 +89,10 @@ class DiarioOficial(DataDiario):
     # URL base para pesquisa
 
     publicacao: str = ""
+    numero_diario: str = ""
     ioepa_endpoint: str = ""
     # Campos principais do modelo
-    texto_original: str = ""
+    texto_original: str = str()
     diario_valido: bool = False
     download_dir: Path = Field(default_factory=lambda: Path.cwd() / "diarios")
     pdf_file: Optional[str] = ""
@@ -141,7 +141,7 @@ class DiarioOficial(DataDiario):
         self.ioepa_endpoint = f"{BASE_URL}{self.publicacao}"
         self.diario_valido = self._diario_existe(self.ioepa_endpoint)
         
-
+        logger.debug(f"Parametros da classe DiarioOficial: {self.model_dump()}")
         # Se o diário não existir, não é necessário continuar
         if not self.diario_valido:
             raise DiarioNaoExiste(
@@ -166,24 +166,15 @@ class DiarioOficial(DataDiario):
             self.local_path = os.path.join(self.download_dir, Path(self.pdf_file))
             if self._pdf_disponivel(self.local_path):
                 logger.info(f"PDF válido encontrado: {self.pdf_file}")
+                if not self.texto_original:
+                    logger.debug("Extraindo texto do PDF")
+                    self.texto_original = self.extract_text(pdf_path=self.local_path, limpar_texto=self.limpar_texto)
+                    self.numero_diario = self._obter_numero_diario(self.texto_original)
             else:
-                self.download_pdf(self.internet_path)
-
-        logger.info(f"Diretório de download configurado: {self.download_dir}")
-
-        if not self.pdf_file:
-            try:
-                self.local_path = self.download_dir / Path(self.pdf_file)
-                if self._pdf_disponivel(self.local_path):
-                    logger.info(f"PDF válido encontrado: {self.pdf_file}")
-                    # Extrair texto se necessário
-                    if not self.texto_original:
-                        self.texto_original = self.extract_text(pdf_path=self.full_path, limpar_texto=self.limpar_texto)
+                if self.download_pdf(self.internet_path) and self._pdf_disponivel(self.local_path):
+                    self.texto_original = self.extract_text(pdf_path=self.local_path, limpar_texto=self.limpar_texto)
                 else:
-                    logger.warning(f"PDF não encontrado ou inválido: {self.pdf_file}")
-                    # Continua o fluxo para tentar baixar o PDF
-            except Exception as e:
-                logger.error(f"Erro ao verificar PDF especificado: {e}")
+                    logger.error(f"Erro ao verificar PDF especificado: {e}")
 
         logger.info(
             f"Inicializando DiarioOficial para a data: {self.data_diario.dia:02d}/{self.data_diario.mes:02d}/{self.data_diario.ano}"
@@ -398,8 +389,18 @@ class DiarioOficial(DataDiario):
         text = re.sub(r" {2,}", " ", text)
         text = re.sub(r"\n", "", text)
         return text.strip()
+    
+    def _obter_numero_diario(self, texto: str) -> str:
+        pattern = r"\b\d{4}[\s\W]+DOE\s+TCMPA\s+Nº\s+([\d\.]+)"
+        match = re.search(pattern, texto, re.DOTALL)
+        if match:
+            numero = match.group(1)
+            return numero
+        else:
+            return ""
 
-    def extract_text(self, pdf_path: Optional[Union[str, Path]] = None, limpar_texto: bool = True) -> str:
+
+    def extract_text(self, pdf_path:  Path = None, limpar_texto: bool = True) -> str:
         """
         Extrai o texto de um arquivo PDF.
         
@@ -415,11 +416,10 @@ class DiarioOficial(DataDiario):
             logger.info("Texto já extraído anteriormente, reutilizando raw_text.")
             return self.texto_original
 
-        pdf_file_path = self.local_path
 
         try:
-            logger.info(f"Iniciando extração de texto de: {pdf_file_path}")
-            with pymupdf.open(pdf_file_path) as pdf:
+            logger.info(f"Iniciando extração de texto de: {pdf_path}")
+            with pymupdf.open(pdf_path) as pdf:
                 texto = []
                 total_paginas = len(pdf)
 
@@ -428,6 +428,7 @@ class DiarioOficial(DataDiario):
                         continue
                     logger.info(f"Processando página {i+1}/{total_paginas}")
                     texto_pagina = pagina.get_text()
+                    self.numero_diario = self._obter_numero_diario(texto_pagina)
                     texto_pagina = self.clean_text(texto_pagina) if limpar_texto else texto_pagina
                     if texto_pagina:
                         texto.append(texto_pagina)
@@ -438,7 +439,7 @@ class DiarioOficial(DataDiario):
                 logger.warning("Nenhum texto extraído do PDF")
 
             self.texto_original = texto_bruto  # Armazena o texto para reutilização
-            return texto_bruto
+            return self.texto_original
         except Exception as e:
             logger.error(f"Erro na extração de texto: {e}")
             return ""
@@ -467,4 +468,47 @@ class DiarioOficial(DataDiario):
             return cls(dia=data.day, mes=data.month, ano=data.year, **kwargs)
         except ValueError as e:
             raise ValueError(f"Erro na validação da data: {e}")
-
+        
+    @property
+    def texto_preview(self) -> str:
+        """Returns a truncated preview of the texto_original"""
+        if not hasattr(self, 'texto_original') or not self.texto_original:
+            return "No text extracted"
+        return f"{self.texto_original[:100]}..." if len(self.texto_original) > 100 else self.texto_original
+    
+    
+    def __str__(self) -> str:
+        """
+        Customizes the string representation of the DiarioOficial object.
+        Shows a preview of texto_original (first 100 characters) instead of the full text.
+        
+        Returns:
+            str: The formatted string representation
+        """
+        
+        # Get all object attributes except texto_original
+        attributes = self.model_dump()
+        if 'texto_original' in attributes and attributes['texto_original']:
+            attributes['texto_original'] = self.texto_preview
+            
+        # Format the representation
+        formatted_attrs = ", ".join([f"{k}={repr(v)}" for k, v in attributes.items()])
+        return f"DiarioOficial({formatted_attrs})"
+    
+    def __repr__(self) -> str:
+        """
+        Override __repr__ to ensure that nested representations use the truncated version.
+        """
+        return self.__str__()
+    
+    
+    def get_full_text(self) -> str:
+        """
+        Returns the full texto_original content.
+        
+        Returns:
+            str: The complete extracted text
+        """
+        return self.texto_original
+    
+  

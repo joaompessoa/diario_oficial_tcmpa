@@ -28,8 +28,8 @@ class DocumentoDiarioOficial(BaseModel):
         default="",
         description="Número do documento"
     )
-    publicacao: Optional[str] = Field(
-        default="",
+    publicacao: Optional[DataDiario] = Field(
+        default=DataDiario(),
         description="Data da publicação do diário oficial em DD/MM/YYYY",
         examples=['03/03/2025']
     )
@@ -38,6 +38,7 @@ class DocumentoDiarioOficial(BaseModel):
         description="Texto limpo (processado) do documento"
     )
     diario: Optional[DiarioOficial] = Field(
+        default=DiarioOficial(),
         description="Diário oficial de onde o documento foi extraído"
     )
    
@@ -47,7 +48,7 @@ class DocumentoDiarioOficial(BaseModel):
 
 class ListaDocumentos(DocumentoDiarioOficial):
     documentos: List[DocumentoDiarioOficial] = Field(
-        default_factory=list,
+        default=[],
         description="Lista de documentos extraídos do diário oficial"
     )
 
@@ -60,16 +61,6 @@ class DocumentoBase(ListaDocumentos, ABC):
       - Extração de chaves e seus conteúdos
       - Redação de dados pessoais
     """
-    # def __init__(self, **data):
-    #     """
-    #     Inicializa a classe base com os dados fornecidos.
-        
-    #     Args:
-    #         **data: Argumentos nomeados para inicializar o modelo
-    #     """
-    #     # Ensure proper initialization of the Pydantic model
-    #     super().__init__(**data)
-    
     def _document_type(self) -> str:
         """Retorna o tipo de documento."""
         return self.__class__.__name__.lower()
@@ -123,7 +114,7 @@ class DocumentoBase(ListaDocumentos, ABC):
         """
         if text is None:
             text = self.texto_original
-        pattern = r'((?!PA:)[\(A-ZÁÉÍÓÚÀÂÊÔÇÜÃÕ]+[\(A-Za-záéíóúàâêôçüãõ\)]*)(?=:)'
+        pattern = r'((?!PA:)[\(A-ZÁÉÍÓÚÀÂÊÔÇÜÃÕ]+[ \(A-Za-záéíóúàâêôçüãõ\)]*)(?=:)'
         logger.info("Extraindo chaves do texto")
         matches = re.findall(pattern, text)
         logger.debug(f"Chaves encontradas: {matches}")
@@ -165,29 +156,3 @@ class DocumentoBase(ListaDocumentos, ABC):
         """
         match = re.search(pattern, self.texto_original, flags)
         return match.group(1).strip() if match else None
-    
-    def __str__(self) -> str:
-        """
-        Customizes the string representation of the DiarioOficial object.
-        Shows a preview of texto_original (first 100 characters) instead of the full text.
-        
-        Returns:
-            str: The formatted string representation
-        """
-        # Create a preview of texto_original
-        texto_preview = f"{self.texto_original[:100]}..." if self.texto_original else "No text extracted"
-        
-        # Get all object attributes except texto_original
-        attributes = self.model_dump()
-        if "texto_original" in attributes:
-            attributes["texto_original"] = texto_preview
-            
-        # Format the representation
-        formatted_attrs = ", ".join([f"{k}={repr(v)}" for k, v in attributes.items()])
-        return f"DiarioOficial({formatted_attrs})"
-    
-    def __repr__(self) -> str:
-        """
-        Override __repr__ to ensure that nested representations use the truncated version.
-        """
-        return self.__str__()
