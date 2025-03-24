@@ -55,6 +55,7 @@ class Acordao(DocumentoBase):
             # clean_raw = self.clean_text(section)
             clean_raw = section
             data_dict: Dict[str, Any] = {"categoria": self.categoria}
+            
 
             # Extrai o número do acórdão
             match = re.search(r"ACÓRDÃO Nº (\d+\.\d+)", clean_raw)
@@ -107,7 +108,7 @@ class Acordao(DocumentoBase):
                 if field in data_dict and data_dict[field]:
                     data_dict[field] = self._redact_personal_data(data_dict[field])
 
-            # Armazena o texto original da seção e a data do diário
+            # Armazena um texto de exemplo do original
             data_dict["sample_texto"] = f'{clean_raw[:100]}...'
             # Certifique-se de que "data_diario" esteja presente; use self.data_diario se existir, ou uma string vazia
             data_dict["publicacao"] = getattr(self, "publicacao", "")
@@ -119,17 +120,20 @@ class Acordao(DocumentoBase):
             try:
                 documento = DocumentoDiarioOficial(**data_dict)
                 extracted_documents.append(documento)
-                logger.debug(
-                    f"Resoluções extraídas com sucesso: {data_dict.get('numero', 'unknown')}"
+                logger.success(
+                    f"Acordaos extraídos com sucesso: {data_dict.get('numero', 'unknown')}"
                 )
+                try:
+                    self._cache_entry(texto=section, diario=diario, data = documento, format='json')
+                    self._tokenize_and_store(texto=section, metadados=data_dict, database=self.categoria)
+                    logger.success(f'{self.categoria}:{data_dict.get('numero')} do dia {self.publicacao} tokenizado com sucesso ')
+                except Exception as e:
+                    logger.error(f'Erro ao tentar tokenizar os documentos {e}')
             except Exception as e:
                 logger.error(f"Erro ao criar DocumentoDiarioOficial para seção: {e}")
 
         return extracted_documents
 
-    def validate_acordao_keys(self, keys: list):
-        if not keys:
-            keys = self._get_keys()
 
     def get_sections(self, text: str = None) -> List[str]:
         """

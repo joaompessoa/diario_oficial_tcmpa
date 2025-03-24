@@ -133,7 +133,6 @@ class DiarioOficial(DataDiario):
         }
         kwargs["data_diario"] = DataDiario(**data_diario_args)
 
-        #super().__init__(**kwargs)
 
         # Confirma se o diário existe para a data
         self.limpar_texto = limpar_texto
@@ -147,7 +146,7 @@ class DiarioOficial(DataDiario):
         if not self.diario_valido:
             raise DiarioNaoExiste(f"Diário não encontrado para {self.publicacao}")
         else:
-            logger.info(f"Diário encontrado para {self.publicacao}")
+            logger.success(f"Diário encontrado para {self.publicacao}")
 
         # 1. Verificar e configurar diretório de download
         # Se o diretorio for especificado pelo usuario, checa se ele e valido, e temos as permissoes para salvar documentos nele
@@ -181,10 +180,10 @@ class DiarioOficial(DataDiario):
             self.local_path = os.path.join(self.download_dir, Path(self.pdf_file))
             # checa se o pdf ja existe e ja foi baixado anteriormente
             if self._pdf_disponivel(self.local_path):
-                logger.info(f"PDF válido encontrado: {self.pdf_file}")
+                logger.success(f"PDF válido encontrado: {self.pdf_file}")
                 # se o pdf existir verificamos se temos acesso ao texto dele
                 if not self.texto_original:
-                    logger.debug("Extraindo texto do PDF")
+                    logger.info("Extraindo texto do PDF")
                     # se nao tivermos o texto, usamos extract_text para extrai-lo
                     self.texto_original = self.extract_text(
                         pdf_path=self.local_path, limpar_texto=self.limpar_texto
@@ -199,7 +198,7 @@ class DiarioOficial(DataDiario):
                     )
                 else:
                     logger.error(f"Erro ao verificar PDF especificado: {e}")
-        logger.debug(f"Parametros da classe DiarioOficial: {self.model_dump()}")
+        
 
         logger.info(
             f"Inicializando DiarioOficial para a data: {self.dia:02d}/{self.mes:02d}/{self.ano}"
@@ -285,7 +284,7 @@ class DiarioOficial(DataDiario):
                     f"URL encontrada não parece ser PDF: {self.internet_path}"
                 )
 
-        logger.info(f"URL do PDF encontrada: {self.internet_path}")
+        logger.success(f"URL do PDF encontrada: {self.internet_path}")
         # pdf_file = os.path.basename(self.internet_path)
         # self.pdf_file = pdf_file
         return True
@@ -313,7 +312,7 @@ class DiarioOficial(DataDiario):
             logger.warning(f"Diretório não encontrado: {download_dir}")
             return False
         else:
-            logger.info(f"Diretório encontrado: {download_dir}")
+            logger.success(f"Diretório encontrado: {download_dir}")
             return True
 
     def _pdf_disponivel(self, pdf_path: str | Path) -> bool:
@@ -333,7 +332,7 @@ class DiarioOficial(DataDiario):
                     logger.warning(f"PDF vazio: {pdf_path}")
                     return False
                 else:
-                    logger.info(f"PDF encontrado e não vazio: {pdf_path}")
+                    logger.success(f"PDF encontrado e não vazio: {pdf_path}")
                     return True
         except FileNotFoundError:
             logger.warning(f"Arquivo não encontrado: {pdf_path}")
@@ -372,7 +371,7 @@ class DiarioOficial(DataDiario):
                 logger.debug(f'Trying to make a file {self.pdf_file} on {self.download_dir} with the full local_path as {self.local_path}')
                 with open(self.local_path, "wb") as f:
                     f.write(response.content)
-                logger.info(f"PDF salvo com sucesso em: {self.local_path}")
+                logger.success(f"PDF salvo com sucesso em: {self.local_path}")
                 return True
             except IOError as e:
                 logger.error(f"Falha ao salvar PDF: {e}")

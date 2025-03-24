@@ -3,4 +3,7 @@ pymupdf
 requests
 beautifulsoup4
 loguru
+black
+ollama
+chromadb
 
