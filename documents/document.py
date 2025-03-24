@@ -473,7 +473,10 @@ class DocumentoBase(ListaDocumentos, ABC):
             collection = chroma.get_collection(name=collection)
             return collection
         except InvalidCollectionException:
-            collection = chroma.create_collection(name=collection)
+            collection = chroma.create_collection(
+                name=collection,
+                metadata={"hnsw:space": "cosine"}
+                )
             return collection
 
     def _tokenize_and_store(self, texto: str, metadados: dict, database: str):
@@ -517,19 +520,20 @@ class DocumentoBase(ListaDocumentos, ABC):
                 f"Documento com categoria '{metadados['categoria']}' e de '{metadados['numero']}' ja  Tokenizado"
             )
             return
-        tokenizer = ollama.Client(host="http://10.2.10.115:11434")
-        embed = tokenizer.embed(input=texto, model="llama3.1")
-        embeddings = embed.embeddings
+        #tokenizer = ollama.Client(host="http://10.2.10.115:11434")
+        #embed = tokenizer.embed(input=texto, model="llama3.1")
+        #embed = SentenceTransformer("all-MiniLM-L6-v2")
+        #embeddings = embed.encode([texto])
+        #logger.debug(f'Embeddings: {embeddings.shape}')
         if metadados.get("local"):
             metadados["pdf"] = metadados.pop("local")
             metadados["pdf"] = metadados["pdf"].get("pdf")
         metadata = {**metadados}
         # Example: Using a hypothetical vector DB client
         vector_db.add(
-            embeddings=(
-                embeddings.tolist() if not isinstance(embeddings, list) else embeddings
-            ),
-            metadatas=metadata,
+            #embeddings=embeddings.tolist(),
+            documents=[texto],
+            metadatas=[metadata],
             ids=metadados.get("numero"),
         )
 

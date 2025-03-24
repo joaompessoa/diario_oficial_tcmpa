@@ -6,4 +6,5 @@ loguru
 black
 ollama
 chromadb
+sentence-transformers 
 
