@@ -285,8 +285,6 @@ class DiarioOficial(DataDiario):
                 )
 
         logger.success(f"URL do PDF encontrada: {self.internet_path}")
-        # pdf_file = os.path.basename(self.internet_path)
-        # self.pdf_file = pdf_file
         return True
 
     def refresh(self) -> bool:
@@ -504,12 +502,12 @@ class DiarioOficial(DataDiario):
             str: The formatted string representation
         """
 
-        # Get all object attributes except texto_original
+        # Pegue os atributos do modelo
         attributes = self.model_dump()
         if "texto_original" in attributes and attributes["texto_original"]:
             attributes["texto_original"] = self.texto_preview
 
-        # Format the representation
+        # Formate os atributos em uma string
         formatted_attrs = ", ".join([f"{k}={repr(v)}" for k, v in attributes.items()])
         return f"DiarioOficial({formatted_attrs})"
 
