@@ -21,7 +21,7 @@ class Acordao(DocumentoBase):
             diario (Optional[DiarioOficial]): Diário oficial de onde extrair os documentos.
             Se não fornecido, cria um novo para a data atual.
         """
-        logger.debug("Inicializando Resolucao")
+        logger.debug(f"Inicializando {self.__class__.__name__}...")
 
         if not diario:
             logger.warning(f"Nenhum diario disponibilizado, usando o dia de hoje!")
@@ -116,7 +116,7 @@ class Acordao(DocumentoBase):
             data_dict["ioepa"] = diario.internet_path
             data_dict["local"] = {"caminho": diario.local_path, "pdf": diario.pdf_file}
 
-            logger.debug(f"Extracted Resolucao {data_dict.get('numero', 'unknown')}")
+            logger.debug(f"Extracted {self.__class__.__name__}...) {data_dict.get('numero', 'unknown')}")
             try:
                 documento = DocumentoDiarioOficial(**data_dict)
                 extracted_documents.append(documento)

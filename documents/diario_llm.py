@@ -1,29 +1,25 @@
-from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any, List
-from datetime import date
-from documents.document import DocumentoDiarioOficial
-from util.logger_config import logger
-from pydantic_ai import Agent
-from pydantic_ai.agent import AgentRunResult
-from pydantic_ai.models.openai import OpenAIModel
-from pydantic_ai.exceptions import UnexpectedModelBehavior
-from pydantic_ai.providers.openai import OpenAIProvider
-from pydantic_ai.format_as_xml import format_as_xml
-from pydantic_ai.models.gemini import GeminiModel
-from pydantic_ai.providers.google_gla import GoogleGLAProvider
-import asyncio
-
-from typing import Optional, List, Dict, Union
-from pydantic import BaseModel, Field, ConfigDict
-from datetime import date
 import os
+from typing import Any, Dict, List, Literal, Optional, Union
 
 from dotenv import load_dotenv
+from pydantic import BaseModel, ConfigDict, Field
+from pydantic_ai import Agent
+from pydantic_ai.agent import AgentRunResult
+from pydantic_ai.exceptions import UnexpectedModelBehavior
+from pydantic_ai.format_as_xml import format_as_xml
+from pydantic_ai.models.gemini import GeminiModel
+from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.providers.google_gla import GoogleGLAProvider
+from pydantic_ai.providers.openai import OpenAIProvider
+
+from util.logger_config import logger
+
 load_dotenv()
 
 
 import logfire
 
+# Setup especifico do logfire para tratar campos sensíveis
 def scrubbing_callback(m: logfire.ScrubMatch):
     if (
         m.path == ('attributes', 'model_request_parameters', 'result_tools', 0, 'parameters_json_schema', 'properties', 'orgao', 'examples', 0)
@@ -155,7 +151,7 @@ class Acordao(BaseModel):
         alias=["procurador", "representante_legal"]
     )
     
-    recorrentes: Union[Optional[List[Dict[str,str]]], Optional[str]] = Field(
+    recorrentes: Union[Optional[List[Dict[str,Any]]], Optional[str]] = Field(
         title="Recorrentes",
         description="Recorrentes ou partes interessadas",
         alias=["partes", "interessados", "requerentes"]
@@ -226,13 +222,13 @@ class LocalLlm:
             backend (str): Backend a ser usado ('ollama' ou 'llama')
             base_url (str, optional): URL base do backend. Se vazia, será inferida.
         """
-        self.base_url = base_url or self.set_backend(backend)
+        self.base_url = base_url or self.set_base_url(backend)
         self.texto = texto
         self.modelo = modelo
         self.backend = backend
         logger.debug(f'Class LocalLlm: {self.texto[:50]}..., modelo: {self.modelo}, backend: {self.backend}, base_url: {self.base_url}')
         
-    def set_backend(self, backend: str = 'ollama') -> str:
+    def set_base_url(self, backend: Literal['ollama', 'llama'] = 'ollama') -> str:
         """
         Define a URL base do backend com base no tipo especificado.
         
@@ -246,11 +242,11 @@ class LocalLlm:
             ValueError: Se o backend não for suportado
         """
         if backend == 'ollama':
-            return 'http://10.2.10.115:11434/v1'
+            return os.getenv('OLLAMA_ENDPOINT', 'http://localhost:11434/v1')
         elif backend == 'llama':
-            return 'http://10.2.10.115:8080'
-        elif backend == 'google':
-            return 'google'
+            return os.getenv('LLAMA_ENDPOINT', 'http://localhost:8080')
+        else:
+            return None
     
     def set_examples(self) -> str:
         """
@@ -406,7 +402,7 @@ class LocalLlm:
         )
     
     
-    def run_agent(self, agent: Agent, texto: str) -> AgentRunResult | None:
+    def run_agent(self, agent: Agent, texto: str, export_json = False) -> Dict[str, Any]:
         """
         Executa o agente de forma síncrona (wrapper para a versão assíncrona).
         
@@ -419,9 +415,13 @@ class LocalLlm:
         """
         try:
             logger.info(f'Starting Process...')
-            response = agent.run_sync(user_prompt=texto)
+            response: AgentRunResult = agent.run_sync(user_prompt=texto)
             structured_response: Acordao = response.data
-            json_response = structured_response.model_dump()
+            json_response: str = structured_response.model_dump_json(indent=4)
+            if export_json:
+                with open('response.json', 'w') as f:
+                    f.write(json_response)
+            logger.success(f'Process finished successfully: {json_response}')
             return {
                 'response': response,
                 'structured_response': structured_response,
@@ -429,4 +429,4 @@ class LocalLlm:
             }
         except UnexpectedModelBehavior:
             logger.error(f"Erro inesperado ao executar agente")
-            return None
+            return {}
