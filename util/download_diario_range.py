@@ -1,6 +1,6 @@
 from documents.diario import DiarioOficial
 from datetime import datetime
-from errors.diario_exceptions import DiarioNaoExiste
+from exceptions.diario_exceptions import DiarioNaoExiste
 from calendar import monthrange
 from util.logger_config import logger
 from time import sleep

@@ -11,7 +11,7 @@ from util.logger_config import logger
 import pymupdf
 from pathlib import Path
 from pydantic import BaseModel, model_validator, field_validator, Field
-from errors.diario_exceptions import DiarioNaoExiste
+from exceptions.diario_exceptions import DiarioNaoExiste
 
 
 class DataDiario(BaseModel):
