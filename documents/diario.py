@@ -188,8 +188,6 @@ class DiarioOficial(DataDiario):
                     self.texto_original = self.extract_text(
                         pdf_path=self.local_path, limpar_texto=self.limpar_texto
                     )
-                    # numero do diario para o dia especificado
-                    self.numero_diario = self._obter_numero_diario(self.texto_original)
             else:
                 # se o pdf nao estiver disponivel, assumimos que precisamos fazer o download do mesmo
                 if self.download_pdf(local_path=self.local_path, internet_path=self.internet_path):

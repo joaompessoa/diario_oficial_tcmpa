@@ -77,6 +77,20 @@ class DocumentoBase(ListaDocumentos, ABC):
         match = re.search(rf"{pattern}", texto)
         doc_id = match.group(1).replace(".", "")
         return doc_id
+    
+    def _is_there_personal_data(self, texto: str) -> bool:
+        """
+        Identifica se existem pessoais no texto.
+        Inicial buscaremos por CPFs no seguinte padrao:
+        CPF: 123.456.789-10
+        """
+        logger.debug(f"Identificando dados pessoais no texto: {texto}")
+        cpf_matches = re.findall(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$" , texto, re.MULTILINE)
+        if cpf_matches:
+            logger.warning(f"CPF encontrado no texto: {cpf_matches}")
+            return True
+        return False
+        
 
     def _redact_personal_data(self, text: str) -> str:
         """
@@ -111,6 +125,9 @@ class DocumentoBase(ListaDocumentos, ABC):
         text = re.sub(r"\n{3,}", "\n\n", text)
         text = re.sub(r" {2,}", " ", text)
         text = re.sub(r"\n", "", text)
+        if self._is_there_personal_data(text):
+            text = self._redact_personal_data(text)
+        logger.success("Texto limpo com sucesso")
         return text.strip()
 
     def _get_keys(self, text: Optional[str] = None) -> List[str]:
@@ -339,10 +356,11 @@ class DocumentoBase(ListaDocumentos, ABC):
         )
         match = municipio_regex.search(key_value)
         if match:
-            # This returns only the matched municipality name.
+            # Retorna o municipio encontrado
             municipio_name = match.group(1)
             return municipio_name
         else:
+            # Retorna o valor original
             return key_value
 
     def validate_controladoria(self, key_value: str) -> str:

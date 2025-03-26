@@ -8,3 +8,6 @@ ollama
 chromadb
 sentence-transformers 
 
+# llms for testing
+google-genai
+
