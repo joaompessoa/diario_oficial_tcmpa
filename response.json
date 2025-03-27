@@ -1,16 +1,21 @@
 {
-    "categoria": "",
-    "numero": "46.073",
-    "processo": "244012005-00",
-    "assunto": "Recurso de Reconsideração (Recurso Ordinário)",
-    "municipio": "Castanhal",
-    "orgao": "Secretaria Municipal de Transporte e Trânsito",
-    "advogado": "Elvis Ribeiro da Silva (OAB-PA 12.114)",
-    "recorrentes": "[{'nome': 'João Sampaio de Oliveira', 'cpf': '083.957.212-10'}, {'nome': 'Waldir Nascimento Batista', 'cpf': '587.875.502-90'}]",
-    "instrucao": "3ª Controladoria/TCM",
-    "ministerio_publico": "Procurador Marcelo Fonseca Barros",
-    "relatoria": "Conselheira Mara Lúcia",
-    "exercicio": "2005",
-    "data_publicacao": "",
-    "ementa": "RECURSO DE RECONSIDERAÇÃO (RECURSO ORDINÁRIO). SECRETARIA MUNICIPAL DE TRANSPORTE E TRÂNSITO DE CASTANHAL. EXERCÍCIO DE 2005. NO PERÍODO DE RESPONSABILIDADE DO ORDENADOR JOÃO SAMPAIO DE OLIVEIRA, CONSTATOU-SE O NÃO ENCAMINHAMENTO DE PROCEDIMENTO LICITATÓRIO E NOTAS DE EMPENHO. INCIDÊNCIA DA PRESCRIÇÃO INTERCORRENTE NA PRETENSÃO SANCIONATÓRIA, NOS TERMOS DO ART. 78-I DA LEI COMPLEMENTAR ESTADUAL Nº. 109/2016. CONHECER DO RECURSO E DAR-LHE PROVIMENTO, REFORMANDO INTEGRALMENTE, A DECISÃO ANTERIORMENTE PROLATADA. NO PERÍODO DE RESPONSABILIDADE DO ORDENADOR WALDIR NASCIMENTO BATISTA, CONTAS JULGADAS REGULARES E NO PERÍODO DE RESPONSABILIDADE DO ORDENADOR JOÃO SAMPAIO DE OLIVEIRA, CONTAS JULGADAS REGULARES, COM RESSALVAS. EXPEDIÇÃO DE ALVARÁS DE QUITAÇÃO."
+    "categoria": "Recurso",
+    "numero": "123456",
+    "processo": "2023.123456.789-0",
+    "assunto": "Ação de Instruções",
+    "municipio": "São Paulo",
+    "orgao": "Unidade Gestora Regional",
+    "advogado": "João Silva",
+    "recorrentes": [
+        {
+            "cnpj": "12.345.678/0001-90",
+            "nome": "Jorge Luiz Barros Carneiro"
+        }
+    ],
+    "instrucao": "Secretaria de Direito",
+    "ministerio_publico": "Procurador Regional",
+    "relatoria": "Advogado dos Tribunais",
+    "exercicio": "2023",
+    "data_publicacao": "2023-10-05",
+    "ementa": "Ação instaurada por Jorge Luiz Barros Carneiro contra a Unidade Gestora Regional de São Paulo."
 }

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Diário Oficial TCMPA</title>
+    <script src="script/fetchDiario.js"></script>
+    <link rel="stylesheet" href="css/home.css">
+    
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Consulta de Diário Oficial - TCMPA</h1>
+        </div>
+
+        <div class="form-container">
+            <form id="diarioForm">
+                <div class="form-group">
+                    <label for="dataConsulta">Selecione a data do Diário Oficial:</label>
+                    <input type="date" id="dataConsulta" name="dataConsulta" required>
+                    <p><small>Selecione a data para consultar o Diário Oficial do Tribunal de Contas dos Municípios do
+                            Estado do Pará.</small></p>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn">Consultar Diário</button>
+                    <button type="reset" class="btn btn-danger">Limpar</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="loadingSpinner" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Consultando Diário Oficial...</p>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
+
+        <div id="resultadoDiario" style="display: none; margin-top: 2rem;">
+            <h3>Resultado da Consulta:</h3>
+            <div id="diarioInfo" class="form-container">
+                <!-- Aqui será inserido o resultado da consulta -->
+            </div>
+            <div class="btn-group" style="justify-content: center;">
+                <button id="downloadBtn" class="btn" style="display: none;">Download do Diário</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 Tribunal de Contas dos Municípios do Estado do Pará. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+
+</html>
