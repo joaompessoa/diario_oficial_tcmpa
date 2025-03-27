@@ -90,7 +90,7 @@ logfire.configure(scrubbing=logfire.ScrubbingOptions(callback=scrubbing_callback
 #         examples=["Prefeito Municipal", "Secretário de Finanças"]
 #     )
 
-class Acordao(BaseModel):
+class Acordao(BaseModel, extra='allow'):
     """
     Modelo flexível para representação de acórdãos, contemplando variações terminológicas
     e campos opcionais que podem aparecer em diferentes formatos de diários oficiais.
@@ -219,7 +219,7 @@ class LocalLlm:
         Args:
             texto (str): Texto a ser processado
             modelo (str): Nome do modelo LLM
-            backend (str): Backend a ser usado ('ollama' ou 'llama')
+            backend (str): Backend a ser usado 
             base_url (str, optional): URL base do backend. Se vazia, será inferida.
         """
         self.base_url = base_url or self.set_base_url(backend)
@@ -367,8 +367,8 @@ class LocalLlm:
         Configura o agente com exemplos detalhados e instruções claras.
         """
         system_prompt = """
-        Você é um especialista em extrair informações estruturadas de documentos jurídicos,
-        especialmente acórdãos e decisões administrativas. 
+        Você é um especialista em extrair informações estruturadas de do Diário Oficial do Tribunal de Contas
+        dos Municiípios do Pará.
 
         Sua tarefa é identificar e extrair informações mesmo quando os nomes dos campos variam.
         Por exemplo:
@@ -392,11 +392,11 @@ class LocalLlm:
         
 
         return Agent(
-            model=model,
-            result_type=Acordao,
+            model=model, # O modelo setado em self.model_setup
+            result_type=Acordao, # O modelo para estruturar o resultado
             system_prompt=system_prompt,
             model_settings=model_settings,
-            instrument=True
+            instrument=True # Instrumento de captura de eventos, no caso aqui o logfire da propria pydantic_ai
            
             
         )
@@ -404,11 +404,12 @@ class LocalLlm:
     
     def run_agent(self, agent: Agent, texto: str, export_json = False) -> Dict[str, Any]:
         """
-        Executa o agente de forma síncrona (wrapper para a versão assíncrona).
+        Executa o agente de forma síncrona .
         
         Args:
             agent (Agent): Agente configurado
             texto (str): Texto a ser processado
+            export_json (bool, optional): Exportar resultado em JSON
             
         Returns:
             DocumentoDiarioOficial: Resultado estruturado do processamento

@@ -85,7 +85,7 @@ class DiarioOficial(DataDiario):
     """
 
     publicacao: str = ""
-    numero_diario: str = ""
+    numero_diario: Optional[str] = None
     ioepa_endpoint: str = ""
     # Campos principais do modelo
     texto_original: str = str()
@@ -408,7 +408,7 @@ class DiarioOficial(DataDiario):
             numero = match.group(1)
             return numero
         else:
-            return ""
+            return 
 
     def extract_text(self, pdf_path: Path = None, limpar_texto: bool = True) -> str:
         """
@@ -437,7 +437,10 @@ class DiarioOficial(DataDiario):
                         continue
                     logger.info(f"Processando página {i+1}/{total_paginas}")
                     texto_pagina = pagina.get_text()
-                    self.numero_diario = self._obter_numero_diario(texto_pagina)
+                    # Se o número do Diário não foi encontrado ainda, tenta extrair
+                    if not self.numero_diario:
+                        self.numero_diario = self._obter_numero_diario(texto_pagina)
+                    logger.debug(f'Número do Diário: {self.numero_diario}')
                     texto_pagina = (
                         self.clean_text(texto_pagina) if limpar_texto else texto_pagina
                     )

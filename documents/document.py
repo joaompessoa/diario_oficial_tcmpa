@@ -1,17 +1,19 @@
-from glob import glob
+import json
+import os
 import re
 from abc import ABC, abstractmethod
-from typing import Dict, Optional, List, Set, Tuple
+from glob import glob
+from pathlib import Path
+from typing import Dict, List, Optional, Set, Tuple
+
+import chromadb
+import ollama
+from chromadb.errors import InvalidCollectionException
 from pydantic import BaseModel, Field
+from sentence_transformers import SentenceTransformer
+
 from documents.diario import DiarioOficial
 from util.logger_config import logger
-from sentence_transformers import SentenceTransformer
-import chromadb
-from chromadb.errors import InvalidCollectionException
-import ollama
-import os
-from pathlib import Path
-import json
 
 
 class DocumentoDiarioOficial(BaseModel):
@@ -34,6 +36,11 @@ class DocumentoDiarioOficial(BaseModel):
         default="",
         description="Data da publicação do diário oficial em DD/MM/YYYY",
         examples=["03/03/2025"],
+    )
+    numero_diario: Optional[str] = Field(
+        default="",
+        description="Número do diário oficial",
+        examples=["1.2345"],
     )
 
     class Config:
@@ -85,7 +92,7 @@ class DocumentoBase(ListaDocumentos, ABC):
         CPF: 123.456.789-10
         """
         logger.debug(f"Identificando dados pessoais no texto: {texto}")
-        cpf_matches = re.findall(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$" , texto, re.MULTILINE)
+        cpf_matches = re.findall(r"^\d{3}\.\d{3}\.\d{3}-\d{2}" , texto, re.MULTILINE)
         if cpf_matches:
             logger.warning(f"CPF encontrado no texto: {cpf_matches}")
             return True
@@ -137,7 +144,7 @@ class DocumentoBase(ListaDocumentos, ABC):
         if text is None:
             text = self.texto_original
 
-        pattern = r"(?!PA:)\w*(?=:\s)"
+        pattern = r"(?!PA:)\w*[\(\w*\)]*(?=:\s)"
 
         logger.info("Extraindo chaves do texto")
         matches = re.findall(pattern, text, flags=re.MULTILINE | re.IGNORECASE)
@@ -427,9 +434,10 @@ class DocumentoBase(ListaDocumentos, ABC):
         try:
             # Cria uma id para a criação do nome do arquivo, normalmente no texto original existe um '.' entres os númeroes
             file_id = data.numero.replace(".", "") if data.numero else None
+            diario_id = data.numero_diario.replace(".", "") if data.numero_diario else None
             # diario.download_dir é um método da classe diário que cria uma pasta com o padrão diretorio_base/ano/mes
             path = Path(diario.download_dir) / data.categoria
-            file_name = f"{data.categoria}_{file_id}.{format}"
+            file_name = f"{diario_id}_{data.categoria}_{file_id}.{format}"
             file_path = path / file_name
             if file_path.exists():
                 logger.warning(f"Arquivo {file_path} ja existe!")

@@ -65,13 +65,13 @@ class Acordao(DocumentoBase):
                 logger.warning("No acórdão number found in section; skipping section.")
                 continue
             processo_pattern = re.compile(
-                        r'(?P<processo>Processo\s+nº\s+[\d\.]+(?:\s*\([\d\.]+\))?)',
-                        re.MULTILINE
-                    )
+                r'PROCESSO\s+N[º°]\s+([\d\.]+(?:\s*\([\d\.]+\))?)',
+                re.IGNORECASE
+            )
             processo_match = processo_pattern.search(clean_raw)
 
             if processo_match:
-                data_dict["processo"] = processo_match.group("processo")
+                data_dict["processo"] = processo_match.group(1)
             else:
                 logger.warning(f"Sem processo para {self.categoria}")
 
@@ -112,7 +112,7 @@ class Acordao(DocumentoBase):
             data_dict["sample_texto"] = f'{clean_raw[:100]}...'
             # Certifique-se de que "data_diario" esteja presente; use self.data_diario se existir, ou uma string vazia
             data_dict["publicacao"] = getattr(self, "publicacao", "")
-            data_dict["diario"] = diario.numero_diario
+            data_dict["numero_diario"] = diario.numero_diario
             data_dict["ioepa"] = diario.internet_path
             data_dict["local"] = {"caminho": diario.local_path, "pdf": diario.pdf_file}
 
