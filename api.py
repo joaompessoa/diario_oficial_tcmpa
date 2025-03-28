@@ -49,7 +49,7 @@ async def consultar_diario(
     dia: int = Query(..., description="Dia do mês (1-31)"),
     mes: int = Query(..., description="Mês (1-12)"),
     ano: int = Query(..., description="Ano (ex: 2024)")
-):
+) -> DiarioResponse:
     """
     Consulta o Diário Oficial do TCMPA para a data especificada.
     
@@ -102,7 +102,7 @@ async def download_diario(
     dia: int = Query(..., description="Dia do mês (1-31)"),
     mes: int = Query(..., description="Mês (1-12)"),
     ano: int = Query(..., description="Ano (ex: 2024)")
-):
+) -> FileResponse:
     """
     Faz o download do PDF do Diário Oficial do TCMPA para a data especificada.
     
