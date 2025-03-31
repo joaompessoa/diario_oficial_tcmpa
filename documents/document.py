@@ -92,7 +92,7 @@ class DocumentoBase(ListaDocumentos, ABC):
         CPF: 123.456.789-10
         """
         logger.debug(f"Identificando dados pessoais no texto: {texto}")
-        cpf_matches = re.findall(r"^\d{3}\.\d{3}\.\d{3}-\d{2}" , texto, re.MULTILINE)
+        cpf_matches = re.findall(r"CPF:\d{3}\.\d{3}\.\d{3}-\d{2}" , texto, re.MULTILINE)
         if cpf_matches:
             logger.warning(f"CPF encontrado no texto: {cpf_matches}")
             return True

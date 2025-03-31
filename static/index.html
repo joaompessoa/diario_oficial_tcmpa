@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consulta de Diário Oficial TCMPA</title>
-    <script src="script/fetchDiario.js"></script>
-    <link rel="stylesheet" href="css/home.css">
+    <script src="static/script/fetchDiario.js"></script>
+    <link rel="stylesheet" href="static/css/home.css">
     
 </head>
 
@@ -20,7 +20,7 @@
             <form id="diarioForm">
                 <div class="form-group">
                     <label for="dataConsulta">Selecione a data do Diário Oficial:</label>
-                    <input type="date" id="dataConsulta" name="dataConsulta" required>
+                    <input type="date" id="dataConsulta" name="dataConsulta" value="<?= new Date().toISOString().split('T')[0] ?>" required >
                     <p><small>Selecione a data para consultar o Diário Oficial do Tribunal de Contas dos Municípios do
                             Estado do Pará.</small></p>
                 </div>
@@ -50,7 +50,7 @@
         </div>
 
         <div class="footer">
-            <p>© 2025 Tribunal de Contas dos Municípios do Estado do Pará. Todos os direitos reservados.</p>
+            <p>2025 | Desenvolvido por:  João Matheus Pessoa da Silva Severino</p>
         </div>
     </div>
 </body>

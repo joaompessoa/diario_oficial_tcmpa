@@ -37,12 +37,14 @@ class DiarioResponse(BaseModel):
     numero_diario: Optional[str] = None
     mensagem: Optional[str] = None
 
-@app.get("/")
+
+@app.get("/", include_in_schema=False)
 async def root():
     """
-    Redireciona para a documentação da API
+    Serve a página HTML principal.
     """
-    return {"message": "Bem-vindo à API de Consulta de Diário Oficial TCMPA. Acesse /docs para documentação."}
+    return FileResponse("static/index.html")
+
 
 @app.get("/api/diario", response_model=DiarioResponse)
 async def consultar_diario(
@@ -151,4 +153,4 @@ async def status():
     return {"status": "online", "timestamp": datetime.now().isoformat()}
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)

@@ -51,7 +51,11 @@ def scrubbing_callback(m: logfire.ScrubMatch):
     ):
         return m.value
 
-logfire.configure(scrubbing=logfire.ScrubbingOptions(callback=scrubbing_callback))
+try:
+    logfire.configure(scrubbing=logfire.ScrubbingOptions(callback=scrubbing_callback))
+except Exception as e:
+    logger.error(f"Erro ao configurar logfire: {str(e)}")
+    
 
 
 # class Recorrente(BaseModel):
@@ -168,7 +172,7 @@ class Acordao(BaseModel, extra='allow'):
         title="Ministério Público",
         description="Nome do representante do Ministério Público",
         examples=["Procurador Marcelo Fonseca Barros"],
-        alias=["procurador_contas", "mp", "promotoria"]
+        alias=["procurador contas", "mp", "promotoria"]
     )
     
     relatoria: Optional[str] = Field(
@@ -382,7 +386,7 @@ class LocalLlm:
         {examples}
         """.format(examples=self.set_examples())
         
-        logfire.info('Starting Agent, {model}!', model=model.model_name)
+        
         model_settings = None
         if self.backend not in ('google', 'openai'):
             model_settings = {
