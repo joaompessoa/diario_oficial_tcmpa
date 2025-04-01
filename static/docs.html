@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Documentação da API - Diário Oficial TCMPA</title>
+        <link rel="stylesheet" href="static/css/docs.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Documentação da API - Diário Oficial TCMPA</h1>
+                <p>
+                    Documentação para a API de consulta de Diários Oficiais do Tribunal de Contas dos Municípiosdo Estado do Pará
+
+                </p>
+            </div>
+
+            <div class="content">
+                <div class="sidebar">
+                    <nav>
+                        <ul>
+                            <li><a href="#introducao">Introdução</a></li>
+                            <li><a href="#autenticacao">Autenticação</a></li>
+                            <li><a href="#endpoints">Endpoints</a>
+                                <ul>
+                                    <li><a href="#consulta-diario">Consultar Diário</a></li>
+                                    <li><a href="#download-diario">Download do Diário</a></li>
+                                    <li><a href="#logs">Logs da API</a></li>
+                                    <li><a href="#status">Status da API</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#exemplos">Exemplos de Uso</a></li>
+                            <li><a href="#erros">Códigos de Erro</a></li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <div class="main">
+                    <section id="introducao">
+                        <h2>Introdução</h2>
+                        <p>
+                            A API de Consulta do Diário Oficial TCMPA permite o acesso programático aos Diários Oficiais
+                            publicados pelo Tribunal de Contas dos Municípios do Estado do Pará. Esta API facilita a
+                            busca, consulta e download dos diários oficiais por data específica.
+                        </p>
+                        <p>
+                            A API é RESTful e retorna dados no formato JSON, com exceção do endpoint de download que
+                            retorna o arquivo PDF do diário.
+                        </p>
+                    </section>
+
+                    <section id="autenticacao">
+                        <h2>Autenticação</h2>
+                        <p>
+                            Atualmente, a API não requer autenticação para uso. Todos os endpoints são públicos e podem
+                            ser acessados diretamente.
+                        </p>
+                    </section>
+
+                    <section id="endpoints">
+                        <h2>Endpoints</h2>
+
+                        <article id="consulta-diario">
+                            <h3>Consultar Diário</h3>
+                            <div class="endpoint">
+                                <span class="method">GET</span>
+                                <span class="url">/api/diario</span>
+                            </div>
+
+                            <h4>Parâmetros da Query</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Parâmetro</th>
+                                        <th>Tipo</th>
+                                        <th>Obrigatório</th>
+                                        <th>Descrição</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>dia</td>
+                                        <td>integer ou "hoje"</td>
+                                        <td>Sim</td>
+                                        <td>
+                                            Dia do mês (1-31) ou a string "hoje" para consultar o diário do dia atual
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>mes</td>
+                                        <td>integer</td>
+                                        <td>Não</td>
+                                        <td>
+                                            Mês (1-12). Se não for fornecido, usa o mês atual
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>ano</td>
+                                        <td>integer</td>
+                                        <td>Não</td>
+                                        <td>
+                                            Ano (ex: 2025). Se não for fornecido, usa o ano atual
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h4>Resposta</h4>
+                            <pre>
+                                <code>
+                                    {
+                                        "encontrado": boolean,
+                                        "publicacao": string,
+                                        "pdf_url": string,
+                                        "numero_diario": string,
+                                        "mensagem": string
+                                    }
+                                </code>
+                            </pre>
+
+                            <h4>Exemplo de Requisição</h4>
+                            <pre><code>GET /api/diario?dia=1&mes=4&ano=2025</code></pre>
+
+                            <h4>Exemplo de Resposta</h4>
+                            <pre>
+                                <code>
+                                    {
+                                        "encontrado": true,
+                                        "publicacao": "1/4/2025",
+                                        "pdf_url": "/api/diario/download?dia=1&mes=4&ano=2025",
+                                        "numero_diario": "1.921",
+                                        "mensagem": "Diário Oficial encontrado com sucesso."
+                                    }
+                                </code>
+                            </pre>
+                        </article>
+
+                        <article id="download-diario">
+                            <h3>Download do Diário</h3>
+                            <div class="endpoint">
+                                <span class="method">GET</span>
+                                <span class="url">/api/diario/download</span>
+                            </div>
+
+                            <h4>Parâmetros da Query</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Parâmetro</th>
+                                        <th>Tipo</th>
+                                        <th>Obrigatório</th>
+                                        <th>Descrição</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>dia</td>
+                                        <td>integer ou "hoje"</td>
+                                        <td>Sim</td>
+                                        <td>Dia do mês (1-31) ou a string "hoje" para consultar o diário do dia atual
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>mes</td>
+                                        <td>integer</td>
+                                        <td>Não</td>
+                                        <td>Mês (1-12). Se não for fornecido, usa o mês atual</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ano</td>
+                                        <td>integer</td>
+                                        <td>Não</td>
+                                        <td>Ano (ex: 2025). Se não for fornecido, usa o ano atual</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h4>Resposta</h4>
+                            <p>Retorna o arquivo PDF do Diário Oficial com Content-Type "application/pdf".</p>
+
+                            <h4>Exemplo de Requisição</h4>
+                            <pre><code>GET /api/diario/download?dia=1&mes=4&ano=2025</code></pre>
+                        </article>
+
+                        <article id="logs">
+                            <h3>Logs da API</h3>
+                            <div class="endpoint">
+                                <span class="method">GET</span>
+                                <span class="url">/api/diario/logs</span>
+                            </div>
+
+                            <h4>Parâmetros da Query</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Parâmetro</th>
+                                        <th>Tipo</th>
+                                        <th>Obrigatório</th>
+                                        <th>Descrição</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>lines</td>
+                                        <td>integer</td>
+                                        <td>Não</td>
+                                        <td>Número de linhas de log a retornar. Padrão: 100</td>
+                                    </tr>
+                                    <tr>
+                                        <td>level</td>
+                                        <td>string</td>
+                                        <td>Não</td>
+                                        <td>Nível mínimo de log a retornar. Valores: DEBUG, INFO, WARNING, ERROR,
+                                            CRITICAL. Padrão: DEBUG</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h4>Resposta</h4>
+                            <pre><code>{
+  "status": string,
+  "count": integer,
+  "level": string,
+  "logs": [string]
+}</code></pre>
+
+                            <h4>Exemplo de Requisição</h4>
+                            <pre><code>GET /api/diario/logs?lines=10&level=INFO</code></pre>
+
+                            <h4>Exemplo de Resposta</h4>
+                            <pre><code>{
+  "status": "success",
+  "count": 10,
+  "level": "INFO",
+  "logs": [
+    "2025-04-01 09:07 | INFO | diario.py:extract_text:438 | Processando página 15/21",
+    "2025-04-01 09:07 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto",
+    // ... outros logs
+  ]
+}</code></pre>
+                        </article>
+
+                        <article id="status">
+                            <h3>Status da API</h3>
+                            <div class="endpoint">
+                                <span class="method">GET</span>
+                                <span class="url">/api/status</span>
+                            </div>
+
+                            <h4>Resposta</h4>
+                            <pre><code>{
+  "status": string,
+  "timestamp": string
+}</code></pre>
+
+                            <h4>Exemplo de Requisição</h4>
+                            <pre><code>GET /api/status</code></pre>
+
+                            <h4>Exemplo de Resposta</h4>
+                            <pre><code>{
+  "status": "online",
+  "timestamp": "2025-04-01T12:34:56.789Z"
+}</code></pre>
+                        </article>
+                    </section>
+
+                    <section id="exemplos">
+                        <h2>Exemplos de Uso</h2>
+
+                        <h3>Consultar Diário do Dia Atual</h3>
+                        <pre><code>GET /api/diario?dia=hoje</code></pre>
+
+                        <h3>Consultar Diário de uma Data Específica</h3>
+                        <pre><code>GET /api/diario?dia=15&mes=3&ano=2025</code></pre>
+
+                        <h3>Baixar o PDF do Diário</h3>
+                        <pre><code>GET /api/diario/download?dia=1&mes=4&ano=2025</code></pre>
+
+                        <h3>Exemplo com cURL</h3>
+                        <pre><code>curl -X GET "http://localhost:8000/api/diario?dia=1&mes=4&ano=2025"</code></pre>
+
+                        <h3>Exemplo com JavaScript/Fetch</h3>
+                        <pre><code>fetch('http://localhost:8000/api/diario?dia=1&mes=4&ano=2025')
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Erro:', error));</code></pre>
+                    </section>
+
+                    <section id="erros">
+                        <h2>Códigos de Erro</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Código HTTP</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>400</td>
+                                    <td>Bad Request - Parâmetros inválidos ou ausentes</td>
+                                </tr>
+                                <tr>
+                                    <td>404</td>
+                                    <td>Not Found - Diário Oficial não encontrado</td>
+                                </tr>
+                                <tr>
+                                    <td>500</td>
+                                    <td>Internal Server Error - Erro interno no servidor</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Exemplo de Resposta de Erro</h3>
+                        <pre><code>{
+  "error": "Diário não encontrado para 31/2/2025"
+}</code></pre>
+                    </section>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>
+                    Desenvolvido por: João Matheus Pessoa da Silva Severino
+                </p>
+                <a href="https://github.com/joaompessoa" target="_blank" rel="noopener noreferrer">
+                    <img src="/static/assets/github-mark-white.svg" alt="GitHub" style="width: 24px; height: 24px;">
+                </a>
+                <a href="https://instagram.com/joaompessoa" target="_blank" rel="noopener noreferrer">
+                    <img src="/static/assets/Instagram.svg" alt="Instagram" style="width: 24px; height: 24px;">
+                </a>
+            
+            </div>
+        </div>
+
+        <script src="script/sectionHilightDocs.js"></script>
+    </body>
+
+</html>

@@ -1,0 +1,38 @@
+
+@baseUrl = http://localhost:8000
+
+### Status da API
+GET {{baseUrl}}/api/status
+
+### GetDiario - Com dia específico
+GET {{baseUrl}}/api/diario?dia=1
+
+### GetDiario - Com dia, mês e ano específicos
+GET {{baseUrl}}/api/diario?dia=1&mes=4&ano=2025
+
+### GetDiario - Buscar diário de hoje
+GET {{baseUrl}}/api/diario?dia=hoje
+
+### GetDiario - Buscar diário com mês atual e ano atual
+GET {{baseUrl}}/api/diario?dia=15
+
+### GetDiarioPDF - Com dia específico
+GET {{baseUrl}}/api/diario/download?dia=1
+
+### GetDiarioPDF - Buscar PDF de hoje
+GET {{baseUrl}}/api/diario/download?dia=hoje
+
+### GetDiarioPDF - Com dia, mês e ano específicos
+GET {{baseUrl}}/api/diario/download?dia=1&mes=4&ano=2025
+
+### GetDiarioLogs - 10 linhas mais recentes
+GET {{baseUrl}}/api/diario/logs?lines=10
+
+### GetDiarioLogs - Apenas logs de ERROR
+GET {{baseUrl}}/api/diario/logs?level=ERROR
+
+### GetDiarioLogs - 50 logs mais recentes de nível WARNING ou superior
+GET {{baseUrl}}/api/diario/logs?lines=50&level=WARNING
+
+### GetDiarioLogs - Todos os logs (máximo 100)
+GET {{baseUrl}}/api/diario/logs

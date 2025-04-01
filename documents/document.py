@@ -13,7 +13,9 @@ from pydantic import BaseModel, Field
 from sentence_transformers import SentenceTransformer
 
 from documents.diario import DiarioOficial
-from util.logger_config import logger
+from util.logger_config import setup_logger
+
+logger = setup_logger("base_documentos")
 
 
 class DocumentoDiarioOficial(BaseModel):

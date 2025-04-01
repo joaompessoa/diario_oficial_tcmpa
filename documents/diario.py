@@ -1,5 +1,4 @@
 from datetime import datetime
-from turtle import down
 from typing import Optional
 import requests
 from bs4 import BeautifulSoup
@@ -7,12 +6,13 @@ from urllib.parse import urljoin
 import os
 import sys
 import re
-from util.logger_config import logger
+from util.logger_config import setup_logger
 import pymupdf
 from pathlib import Path
 from pydantic import BaseModel, model_validator, field_validator, Field
-from exceptions.diario_exceptions import DiarioNaoExiste
+from exceptions.diario_exceptions import DiarioNaoExiste, DataFutura
 
+logger = setup_logger("diario")
 
 class DataDiario(BaseModel):
     """
@@ -48,8 +48,8 @@ class DataDiario(BaseModel):
             raise DiarioNaoExiste(f"Data inválida: {self.dia}/{self.mes}/{self.ano}")
 
         if data > datetime.today():
-            raise DiarioNaoExiste(
-                f"A data {self.dia}/{self.mes}/{self.ano} não pode ser maior que hoje ({datetime.today().strftime(format="%S/%M/%Y")})."
+            raise DataFutura(
+                f"A data {self.dia}/{self.mes}/{self.ano} não pode ser maior que hoje ({datetime.today().strftime(format="%d/%m/%Y")})."
             )
 
         return self

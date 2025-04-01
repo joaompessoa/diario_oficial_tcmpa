@@ -12,9 +12,10 @@ from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.google_gla import GoogleGLAProvider
 from pydantic_ai.providers.openai import OpenAIProvider
 
-from util.logger_config import logger
+from util.logger_config import setup_logger
 
 load_dotenv()
+logger = setup_logger("diario_llm")
 
 
 import logfire

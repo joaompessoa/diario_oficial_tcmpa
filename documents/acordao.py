@@ -1,9 +1,10 @@
 import re
-from util.logger_config import logger
+from util.logger_config import setup_logger
 from typing import Dict, Any, List, Optional
 from documents.document import DocumentoBase, DocumentoDiarioOficial
 from documents.diario import DiarioOficial, DataDiario
 
+logger = setup_logger("acordao")
 
 class Acordao(DocumentoBase):
     """
