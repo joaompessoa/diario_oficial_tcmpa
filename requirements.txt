@@ -1,15 +1,22 @@
-pydantic_ai
 pymupdf
 requests
 beautifulsoup4
-loguru
 black
-ollama
-chromadb
-sentence-transformers 
+
+# fastapi
 fastapi
 uvicorn
 
 # llms for testing
 google-genai
+sentence-transformers 
+ollama
+chromadb
+pydantic_ai
 
+#flask
+flask
+flask-cors
+
+# logging
+loguru
