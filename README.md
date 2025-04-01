@@ -12,7 +12,8 @@ diario_oficial_tcmpa/
 ├── exceptions/
 │   └── diario_exceptions.py    # Exceções
 ├── static/                     # Landpage
-│   ├── index.html           
+│   ├── index.html     
+│   │── docs.html    
 │   ├── css/
 │   │   └── styles.css       
 │   └── js/
