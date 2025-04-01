@@ -49,7 +49,7 @@ class DataDiario(BaseModel):
 
         if data > datetime.today():
             raise DataFutura(
-                f"A data {self.dia}/{self.mes}/{self.ano} não pode ser maior que hoje ({datetime.today().strftime(format="%d/%m/%Y")})."
+                f"A data {self.dia}/{self.mes}/{self.ano} não pode ser maior que hoje ({datetime.today().strftime('%d/%m/%Y')})."
             )
 
         return self
