@@ -7,10 +7,8 @@ from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
 import chromadb
-import ollama
 from chromadb.errors import InvalidCollectionException
 from pydantic import BaseModel, Field
-from sentence_transformers import SentenceTransformer
 
 from documents.diario import DiarioOficial
 from util.logger_config import setup_logger

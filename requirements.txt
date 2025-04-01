@@ -8,9 +8,9 @@ fastapi
 uvicorn
 
 # llms for testing
-google-genai
-sentence-transformers 
-ollama
+# google-genai
+# sentence-transformers 
+# ollama
 chromadb
 pydantic_ai
 
