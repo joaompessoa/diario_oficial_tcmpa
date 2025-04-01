@@ -1,71 +1,100 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta de Diário Oficial TCMPA</title>
-    <script src="static/script/fetchDiario.js"></script>
-    <link rel="stylesheet" href="static/css/home.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Consulta de Diário Oficial TCMPA</title>
+        <script src="static/script/fetchDiario.js"></script>
+        <link rel="stylesheet" href="static/css/home.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Consulta de Diário Oficial - TCMPA</h1>
-            <button class="theme-toggle" id="theme-toggle">
-                <i class="fa-solid fa-moon"></i>
-            </button>
-        </div>
+    </head>
 
-        <div class="form-container">
-            <form id="diarioForm">
-                <div class="form-group">
-                    <label for="dataConsulta">Selecione a data do Diário Oficial:</label>
-                    <input type="date" id="dataConsulta" name="dataConsulta" value="<?= new Date().toISOString().split('T')[0] ?>" required >
-                    <p><small>Selecione a data para consultar o Diário Oficial do Tribunal de Contas dos Municípios do
-                            Estado do Pará.</small></p>
-                </div>
-
-                <div class="btn-group">
-                    <button type="submit" class="btn">Consultar Diário</button>
-                    <button type="reset" class="btn btn-danger">Limpar</button>
-                </div>
-            </form>
-        </div>
-
-        <div id="loadingSpinner" class="loading-spinner">
-            <div class="spinner"></div>
-            <p>Consultando Diário Oficial...</p>
-        </div>
-
-        <div id="statusMessage" class="status-message"></div>
-
-        <div id="resultadoDiario" style="display: none; margin-top: 2rem;">
-            <h3>Resultado da Consulta:</h3>
-            <div id="diarioInfo" class="form-container">
-                <!-- Aqui será inserido o resultado da consulta -->
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Consulta de Diário Oficial - TCMPA</h1>
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
             </div>
-            <div class="btn-group" style="justify-content: center;">
-                <button id="downloadBtn" class="btn" style="display: none;">Download do Diário</button>
+
+            <div class="form-container">
+                <form id="diarioForm">
+                    <div class="form-group">
+                        <label for="dataConsulta">Selecione a data do Diário Oficial:</label>
+                        <input type="date" id="dataConsulta" name="dataConsulta" required>
+                        <p><small>Selecione a data para consultar o Diário Oficial do Tribunal de Contas dos Municípios
+                                do
+                                Estado do Pará.</small></p>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn">Consultar Diário</button>
+                        <button type="reset" class="btn btn-danger">Limpar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="loadingSpinner" class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Consultando Diário Oficial...</p>
+            </div>
+
+            <div id="statusMessage" class="status-message"></div>
+
+            <div id="resultadoDiario" style="display: none; margin-top: 2rem;">
+                <h3>Resultado da Consulta:</h3>
+                <div id="diarioInfo" class="form-container">
+                    <!-- Aqui será inserido o resultado da consulta -->
+                </div>
+                <div class="btn-group" style="justify-content: center;">
+                    <button id="downloadBtn" class="btn" style="display: none;">Download do Diário</button>
+                    <button id="acordaosBtn" class="btn btn-secondary" style="display: none;">Ver Acórdãos</button>
+                    <button id="resolucoesBtn" class="btn btn-secondary" style="display: none;">Ver Resoluções</button>
+                </div>
+            </div>
+
+            <!-- Container para exibir Acórdãos -->
+            <div id="acordaosContainer" style="display: none; margin-top: 2rem;">
+                <h3>Acórdãos do Diário:</h3>
+                <div id="acordaosLoading" class="loading-spinner" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Carregando Acórdãos...</p>
+                </div>
+                <div id="acordaosStatusMessage" class="status-message" style="display: none;"></div>
+                <div id="acordaosList" class="documents-list">
+                    <!-- Lista de acórdãos será inserida aqui -->
+                </div>
+            </div>
+
+            <!-- Container para exibir Resoluções -->
+            <div id="resolucoesContainer" style="display: none; margin-top: 2rem;">
+                <h3>Resoluções do Diário:</h3>
+                <div id="resolucoesLoading" class="loading-spinner" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Carregando Resoluções...</p>
+                </div>
+                <div id="resolucoesStatusMessage" class="status-message" style="display: none;"></div>
+                <div id="resolucoesList" class="documents-list">
+                    <!-- Lista de resoluções será inserida aqui -->
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>
+                    Desenvolvido por: João Matheus Pessoa da Silva Severino
+                </p>
+                <a href="https://github.com/joaompessoa" target="_blank" rel="noopener noreferrer">
+                    <img src="/static/assets/github-mark-white.svg" alt="GitHub" style="width: 24px; height: 24px;">
+                </a>
+                <a href="https://instagram.com/joaompessoa" target="_blank" rel="noopener noreferrer">
+                    <img src="/static/assets/Instagram.svg" alt="Instagram" style="width: 24px; height: 24px;">
+                </a>
             </div>
         </div>
+    </body>
+    <script src="static/script/themeToggle.js"></script>
 
-        <div class="footer">
-            <p>
-                Desenvolvido por:  João Matheus Pessoa da Silva Severino
-            </p>
-            <a href="https://github.com/joaompessoa" target="_blank" rel="noopener noreferrer">
-                <img src="/static/assets/github-mark-white.svg" alt="GitHub" style="width: 24px; height: 24px;">
-            </a>
-            <a href="https://instagram.com/joaompessoa" target="_blank" rel="noopener noreferrer">
-                <img src="/static/assets/Instagram.svg" alt="Instagram" style="width: 24px; height: 24px;">
-            </a>
-
-        </div>
-    </div>
-</body>
-<script src="static/script/themeToggle.js"></script>
 </html>

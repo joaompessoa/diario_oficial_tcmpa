@@ -4,7 +4,7 @@ from typing import Dict, Any, List, Optional
 from documents.document import DocumentoBase, DocumentoDiarioOficial
 from documents.diario import DiarioOficial, DataDiario
 
-logger = setup_logger("acordao")
+logger = setup_logger()
 
 class Acordao(DocumentoBase):
     """

@@ -11,8 +11,8 @@ from documents.diario import DiarioOficial, DataDiario
 from exceptions.diario_exceptions import DiarioNaoExiste, DataFutura
 from util.logger_config import setup_logger
 
-logger_name = "flask_api"
-logger = setup_logger(logger_name)
+
+logger = setup_logger()
 
 app = Flask(__name__, static_folder="static", static_url_path="/static")
 CORS(app)
@@ -123,6 +123,164 @@ def consultar_diario() -> Response:
         abort(500, description=f"Erro ao consultar o Diário Oficial: {str(e)}")
 
 
+@app.route("/api/diario/acordaos", methods=["GET"])
+def listar_acordaos() -> Response:
+    """
+    Lista os Acórdãos do Diário Oficial do TCMPA para a data especificada.
+
+    Query Parameters:
+    - dia: Dia do mês (1-31) ou 'hoje' para o dia atual
+    - mes: Mês (1-12), opcional (default: mês atual)
+    - ano: Ano (ex: 2024), opcional (default: ano atual)
+
+    Returns:
+    - Lista de Acórdãos encontrados no Diário Oficial
+    """
+    try:
+        hoje = datetime.today()
+
+        # Verificar se o parâmetro 'dia' é 'hoje'
+        dia_param = request.args.get("dia")
+        if dia_param == "hoje":
+            dia = hoje.day
+            mes = hoje.month
+            ano = hoje.year
+        else:
+            # Extrair parâmetros com defaults
+            dia = request.args.get("dia")
+            mes = request.args.get("mes", default=str(hoje.month))
+            ano = request.args.get("ano", default=str(hoje.year))
+
+        # Verificar se dia foi fornecido
+        if dia is None and dia_param != "hoje":
+            abort(400, description="O parâmetro 'dia' é obrigatório.")
+
+        # Usar a classe DataDiario para validação
+        try:
+            data_consulta = DataDiario(dia=dia, mes=mes, ano=ano)
+        except DataFutura as e:
+            return jsonify({"status": "error", "mensagem": str(e), "acordaos": []})
+        except ValueError as e:
+            abort(400, description=f"Erro na validação da data: {str(e)}")
+
+        # Tentar obter o diário oficial
+        diario = DiarioOficial(**data_consulta.model_dump())
+
+        # Obter os acórdãos do diário
+        from documents.acordao import Acordao
+
+        acordaos = Acordao(diario=diario)
+
+        # Converter para formato JSON
+        resultado = []
+        for doc in acordaos.documentos:
+            # Converta cada DocumentoDiarioOficial para dict, excluindo texto_original que pode ser muito grande
+            doc_dict = doc.model_dump()
+            if "texto_original" in doc_dict:
+                del doc_dict["texto_original"]
+            resultado.append(doc_dict)
+
+        return jsonify(
+            {
+                "status": "success",
+                "mensagem": f"Encontrados {len(resultado)} acórdãos",
+                "acordaos": resultado,
+            }
+        )
+
+    except DiarioNaoExiste as e:
+        logger.error(f"Diário não existe: {str(e)}")
+        return jsonify({"status": "error", "mensagem": str(e), "acordaos": []})
+    except Exception as e:
+        logger.error(f"Erro ao listar acórdãos: {str(e)}")
+        return jsonify(
+            {
+                "status": "error",
+                "mensagem": f"Erro ao listar acórdãos: {str(e)}",
+                "acordaos": [],
+            }
+        )
+
+
+@app.route("/api/diario/resolucoes", methods=["GET"])
+def listar_resolucoes() -> Response:
+    """
+    Lista as Resoluções do Diário Oficial do TCMPA para a data especificada.
+
+    Query Parameters:
+    - dia: Dia do mês (1-31) ou 'hoje' para o dia atual
+    - mes: Mês (1-12), opcional (default: mês atual)
+    - ano: Ano (ex: 2024), opcional (default: ano atual)
+
+    Returns:
+    - Lista de Resoluções encontradas no Diário Oficial
+    """
+    try:
+        hoje = datetime.today()
+
+        # Verificar se o parâmetro 'dia' é 'hoje'
+        dia_param = request.args.get("dia")
+        if dia_param == "hoje":
+            dia = hoje.day
+            mes = hoje.month
+            ano = hoje.year
+        else:
+            # Extrair parâmetros com defaults
+            dia = request.args.get("dia")
+            mes = request.args.get("mes", default=str(hoje.month))
+            ano = request.args.get("ano", default=str(hoje.year))
+
+        # Verificar se dia foi fornecido
+        if dia is None and dia_param != "hoje":
+            abort(400, description="O parâmetro 'dia' é obrigatório.")
+
+        # Usar a classe DataDiario para validação
+        try:
+            data_consulta = DataDiario(dia=dia, mes=mes, ano=ano)
+        except DataFutura as e:
+            return jsonify({"status": "error", "mensagem": str(e), "resolucoes": []})
+        except ValueError as e:
+            abort(400, description=f"Erro na validação da data: {str(e)}")
+
+        # Tentar obter o diário oficial
+        diario = DiarioOficial(**data_consulta.model_dump())
+
+        # Obter as resoluções do diário
+        from documents.resolucao import Resolucao
+
+        resolucoes = Resolucao(diario=diario)
+
+        # Converter para formato JSON
+        resultado = []
+        for doc in resolucoes.documentos:
+            # Converta cada DocumentoDiarioOficial para dict, excluindo texto_original que pode ser muito grande
+            doc_dict = doc.model_dump()
+            if "texto_original" in doc_dict:
+                del doc_dict["texto_original"]
+            resultado.append(doc_dict)
+
+        return jsonify(
+            {
+                "status": "success",
+                "mensagem": f"Encontradas {len(resultado)} resoluções",
+                "resolucoes": resultado,
+            }
+        )
+
+    except DiarioNaoExiste as e:
+        logger.error(f"Diário não existe: {str(e)}")
+        return jsonify({"status": "error", "mensagem": str(e), "resolucoes": []})
+    except Exception as e:
+        logger.error(f"Erro ao listar resoluções: {str(e)}")
+        return jsonify(
+            {
+                "status": "error",
+                "mensagem": f"Erro ao listar resoluções: {str(e)}",
+                "resolucoes": [],
+            }
+        )
+
+
 @app.route("/api/diario/download")
 def download_diario() -> Response:
     """
@@ -229,7 +387,7 @@ def get_logs() -> Response:
         # Caminho para o arquivo de log
         base_dir = Path(__file__).parent
         log_dir = base_dir / "logs"
-        log_file = log_dir / f"{logger_name}.log"
+        log_file = log_dir / "diario.log"
 
         if not log_file.exists():
             return jsonify(

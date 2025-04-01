@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 
-def setup_logger(name: str = __name__) -> Logger:
+def setup_logger() -> Logger:
     # Create a configured logger instance
     logger: Logger = loguru_logger
     # Remove default handlers
@@ -20,7 +20,7 @@ def setup_logger(name: str = __name__) -> Logger:
     )
 
     # Main logger
-    log_file = log_dir / f"{name}.log"
+    log_file = log_dir / f"diario.log"
 
     logger.add(
         sink=log_file,
@@ -37,7 +37,7 @@ def setup_logger(name: str = __name__) -> Logger:
     # stdout handler para operações normais
     logger.add(
         sink=sys.stdout,
-        level="DEBUG",
+        level="INFO",
         colorize=True,
         enqueue=True,
         format=log_format,

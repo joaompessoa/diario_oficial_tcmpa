@@ -203,3 +203,139 @@
 2025-04-01 09:07 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
 2025-04-01 09:07 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
 2025-04-01 09:07 | INFO | diario.py:__init__:201 | Inicializando DiarioOficial para a data: 01/04/2025
+2025-04-01 10:17 | INFO | diario.py:_diario_existe:252 | Buscando URL: https://tcm.ioepa.com.br/busca/default.aspx?dts=1/4/2025
+2025-04-01 10:17 | SUCCESS | diario.py:_diario_existe:285 | URL do PDF encontrada: https://tcm.ioepa.com.br/diarios/2025/2025.04.01.DOE.pdf
+2025-04-01 10:17 | SUCCESS | diario.py:__init__:149 | Diário encontrado para 1/4/2025
+2025-04-01 10:17 | SUCCESS | diario.py:_pdf_disponivel:331 | PDF encontrado e não vazio: /home/joaompessoa/diario_oficial_tcmpa/diarios/2025/04/2025.04.01.DOE.pdf
+2025-04-01 10:17 | SUCCESS | diario.py:__init__:183 | PDF válido encontrado: 2025.04.01.DOE.pdf
+2025-04-01 10:17 | INFO | diario.py:__init__:186 | Extraindo texto do PDF
+2025-04-01 10:17 | INFO | diario.py:extract_text:430 | Iniciando extração de texto de: /home/joaompessoa/diario_oficial_tcmpa/diarios/2025/04/2025.04.01.DOE.pdf
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 2/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 3/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 4/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 5/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 6/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 7/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 8/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 9/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 10/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 11/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 12/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 13/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 14/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 15/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 16/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 17/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 18/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 19/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 20/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:extract_text:438 | Processando página 21/21
+2025-04-01 10:17 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:17 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:17 | INFO | diario.py:__init__:201 | Inicializando DiarioOficial para a data: 01/04/2025
+2025-04-01 10:18 | INFO | diario.py:_diario_existe:252 | Buscando URL: https://tcm.ioepa.com.br/busca/default.aspx?dts=1/4/2025
+2025-04-01 10:18 | SUCCESS | diario.py:_diario_existe:285 | URL do PDF encontrada: https://tcm.ioepa.com.br/diarios/2025/2025.04.01.DOE.pdf
+2025-04-01 10:18 | SUCCESS | diario.py:__init__:149 | Diário encontrado para 1/4/2025
+2025-04-01 10:18 | SUCCESS | diario.py:_pdf_disponivel:331 | PDF encontrado e não vazio: /home/joaompessoa/diario_oficial_tcmpa/diarios/2025/04/2025.04.01.DOE.pdf
+2025-04-01 10:18 | SUCCESS | diario.py:__init__:183 | PDF válido encontrado: 2025.04.01.DOE.pdf
+2025-04-01 10:18 | INFO | diario.py:__init__:186 | Extraindo texto do PDF
+2025-04-01 10:18 | INFO | diario.py:extract_text:430 | Iniciando extração de texto de: /home/joaompessoa/diario_oficial_tcmpa/diarios/2025/04/2025.04.01.DOE.pdf
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 2/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 3/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 4/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 5/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 6/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 7/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 8/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 9/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 10/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 11/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 12/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 13/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 14/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 15/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 16/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 17/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 18/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 19/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 20/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:extract_text:438 | Processando página 21/21
+2025-04-01 10:18 | DEBUG | diario.py:extract_text:443 | Número do Diário: 1.921
+2025-04-01 10:18 | INFO | diario.py:clean_text:383 | Iniciando limpeza do texto
+2025-04-01 10:18 | INFO | diario.py:__init__:201 | Inicializando DiarioOficial para a data: 01/04/2025

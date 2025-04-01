@@ -12,7 +12,7 @@ from pathlib import Path
 from pydantic import BaseModel, model_validator, field_validator, Field
 from exceptions.diario_exceptions import DiarioNaoExiste, DataFutura
 
-logger = setup_logger("diario")
+logger = setup_logger()
 
 class DataDiario(BaseModel):
     """

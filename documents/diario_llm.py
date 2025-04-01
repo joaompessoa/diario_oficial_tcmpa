@@ -15,7 +15,7 @@ from pydantic_ai.providers.openai import OpenAIProvider
 from util.logger_config import setup_logger
 
 load_dotenv()
-logger = setup_logger("diario_llm")
+logger = setup_logger()
 
 
 import logfire

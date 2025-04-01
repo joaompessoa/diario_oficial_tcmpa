@@ -15,7 +15,7 @@ from sentence_transformers import SentenceTransformer
 from documents.diario import DiarioOficial
 from util.logger_config import setup_logger
 
-logger = setup_logger("base_documentos")
+logger = setup_logger()
 
 
 class DocumentoDiarioOficial(BaseModel):
